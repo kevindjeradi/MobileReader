@@ -4,6 +4,7 @@ class BookTile extends StatelessWidget {
   final String coverUrl;
   final String title;
   final String author;
+  final double width;
   final double progress;
 
   const BookTile({
@@ -12,12 +13,13 @@ class BookTile extends StatelessWidget {
     required this.title,
     required this.author,
     required this.progress,
+    required this.width,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 200,
+      width: width,
       padding: const EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
