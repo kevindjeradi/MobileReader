@@ -1,80 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_reader_front/components/book_tile.dart';
 
-class Homepage extends StatefulWidget {
-  const Homepage({super.key});
-
-  @override
-  HomepageState createState() => HomepageState();
-}
-
-class HomepageState extends State<Homepage> {
-  int _selectedIndex = 0;
-
-  static final List<Widget> _widgetOptions = <Widget>[
-    const HomeScreen(),
-    const Text('Rechercher (à venir)'),
-    const Text('Bibliothèque (à venir)'),
-    const Text('Réglages (à venir)'),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('K Reader'),
-      ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Accueil',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Rechercher',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.book),
-            label: 'Bibliothèque',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings),
-            label: 'Réglages',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        unselectedItemColor: Colors.grey,
-        onTap: _onItemTapped,
-      ),
-    );
-  }
-}
-
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+class Home extends StatelessWidget {
+  const Home({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ListView(
-      children: const <Widget>[
-        Text('Lecture en cours',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        SizedBox(height: 20),
-        Text('Catégories',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-        SizedBox(height: 20),
-        Text('Historique',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+      padding: const EdgeInsets.all(8.0),
+      children: <Widget>[
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            'En cours',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ),
+        const Center(
+          child: SizedBox(
+            height: 300,
+            child: BookTile(
+              width: 400,
+              coverUrl: 'https://via.placeholder.com/100x150',
+              title: 'When A Mage Revolts',
+              author: 'Yin Si',
+              progress: 0.8,
+            ),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            'Historique',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+        ),
+        SizedBox(
+          height: 250,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: const <Widget>[
+              BookTile(
+                width: 200,
+                coverUrl: 'https://via.placeholder.com/100x150',
+                title: 'When A Mage Revolts',
+                author: 'Yin Si',
+                progress: 0.8,
+              ),
+              SizedBox(width: 8),
+              BookTile(
+                width: 200,
+                coverUrl: 'https://via.placeholder.com/100x150',
+                title: 'True Martial World',
+                author: 'Cocooned Cow',
+                progress: 0.98,
+              ),
+            ],
+          ),
+        ),
       ],
     );
   }
