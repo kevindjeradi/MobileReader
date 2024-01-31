@@ -1,40 +1,73 @@
 import 'package:flutter/material.dart';
 
-class BookTile extends StatelessWidget {
+class BookTile extends StatefulWidget {
   final String coverUrl;
   final String title;
   final String author;
   final double width;
   final double progress;
+  final bool favorite;
 
   const BookTile({
     Key? key,
     required this.coverUrl,
     required this.title,
     required this.author,
-    required this.progress,
     required this.width,
+    required this.progress,
+    this.favorite = false,
   }) : super(key: key);
+
+  @override
+  BookTileState createState() => BookTileState();
+}
+
+class BookTileState extends State<BookTile> {
+  late bool favorite;
+
+  @override
+  void initState() {
+    super.initState();
+    favorite = widget.favorite;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: width,
+      width: widget.width,
       padding: const EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
+        children: [
           Expanded(
-            child: Center(
-              child: Image.network(
-                coverUrl,
-                fit: BoxFit.cover,
-              ),
+            child: Stack(
+              children: [
+                Center(
+                  child: Image.network(
+                    widget.coverUrl,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        favorite = !favorite;
+                      });
+                    },
+                    child: favorite
+                        ? const Icon(Icons.favorite)
+                        : const Icon(Icons.favorite_border),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            title,
+            widget.title,
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -43,7 +76,7 @@ class BookTile extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            author,
+            widget.author,
             style: const TextStyle(
               fontSize: 14,
             ),
@@ -54,15 +87,14 @@ class BookTile extends StatelessWidget {
             children: [
               Expanded(
                 child: LinearProgressIndicator(
-                  value: progress,
+                  value: widget.progress,
                   backgroundColor: Colors.grey.shade300,
-                  valueColor:
-                      const AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                  valueColor: const AlwaysStoppedAnimation(Colors.blueAccent),
                 ),
               ),
               const SizedBox(width: 8),
               Text(
-                '${(progress * 100).toStringAsFixed(0)}%',
+                '${(widget.progress * 100).toStringAsFixed(0)}%',
                 style: const TextStyle(fontSize: 14),
               ),
             ],
