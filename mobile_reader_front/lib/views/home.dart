@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_reader_front/components/book_tile.dart';
+import 'package:mobile_reader_front/models/book.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -22,16 +23,10 @@ class Home extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
-          const Center(
+          Center(
             child: SizedBox(
               height: 300,
-              child: BookTile(
-                width: 400,
-                coverUrl: 'https://via.placeholder.com/100x150',
-                title: 'When A Mage Revolts',
-                author: 'Yin Si',
-                progress: 0.8,
-              ),
+              child: BookTile(width: 400, book: mockDataBooks[0]),
             ),
           ),
           const SizedBox(height: 20),
@@ -44,25 +39,17 @@ class Home extends StatelessWidget {
           ),
           SizedBox(
             height: 250,
-            child: ListView(
+            child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              children: const <Widget>[
-                BookTile(
-                  width: 200,
-                  coverUrl: 'https://via.placeholder.com/100x150',
-                  title: 'When A Mage Revolts',
-                  author: 'Yin Si',
-                  progress: 0.8,
-                ),
-                SizedBox(width: 8),
-                BookTile(
-                  width: 200,
-                  coverUrl: 'https://via.placeholder.com/100x150',
-                  title: 'True Martial World',
-                  author: 'Cocooned Cow',
-                  progress: 0.98,
-                ),
-              ],
+              itemCount: mockDataBooks.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: BookTile(
+                    book: mockDataBooks[index],
+                  ),
+                );
+              },
             ),
           ),
         ],
