@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_reader_front/components/book_tile.dart';
+import 'package:mobile_reader_front/models/book.dart';
 
 class Library extends StatelessWidget {
   const Library({super.key});
@@ -24,27 +25,17 @@ class Library extends StatelessWidget {
           ),
           SizedBox(
             height: 250,
-            child: ListView(
+            child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              children: const <Widget>[
-                BookTile(
-                  width: 200,
-                  coverUrl: 'https://via.placeholder.com/100x150',
-                  title: 'When A Mage Revolts',
-                  author: 'Yin Si',
-                  progress: 0.8,
-                  favorite: false,
-                ),
-                SizedBox(width: 8),
-                BookTile(
-                  width: 200,
-                  coverUrl: 'https://via.placeholder.com/100x150',
-                  title: 'True Martial World',
-                  author: 'Cocooned Cow',
-                  progress: 0.98,
-                  favorite: true,
-                ),
-              ],
+              itemCount: mockDataBooks.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: BookTile(
+                    book: mockDataBooks[index],
+                  ),
+                );
+              },
             ),
           ),
           const SizedBox(height: 20),
@@ -57,29 +48,19 @@ class Library extends StatelessWidget {
           ),
           SizedBox(
             height: 250,
-            child: ListView(
+            child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              children: const <Widget>[
-                BookTile(
-                  width: 200,
-                  coverUrl: 'https://via.placeholder.com/100x150',
-                  title: 'When A Mage Revolts',
-                  author: 'Yin Si',
-                  progress: 0.8,
-                  favorite: false,
-                ),
-                SizedBox(width: 8),
-                BookTile(
-                  width: 200,
-                  coverUrl: 'https://via.placeholder.com/100x150',
-                  title: 'True Martial World',
-                  author: 'Cocooned Cow',
-                  progress: 0.98,
-                  favorite: true,
-                ),
-              ],
+              itemCount: mockDataBooks.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: BookTile(
+                    book: mockDataBooks[index],
+                  ),
+                );
+              },
             ),
-          )
+          ),
         ],
       ),
     );
