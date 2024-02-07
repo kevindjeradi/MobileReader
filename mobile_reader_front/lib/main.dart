@@ -13,8 +13,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'K Reader',
       theme: ThemeData.dark().copyWith(
-        primaryColor: Colors.black,
-        scaffoldBackgroundColor: Colors.black,
+        primaryColor: const Color.fromARGB(255, 24, 24, 24),
+        scaffoldBackgroundColor: const Color.fromARGB(255, 24, 24, 24),
         bottomNavigationBarTheme: BottomNavigationBarThemeData(
           selectedItemColor: Colors.amber[800],
           unselectedItemColor: Colors.grey,
