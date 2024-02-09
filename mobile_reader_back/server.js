@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 const checkAuth = require('./middleware/checkAuth');
-const userRoutes = require('./routes/userRoutes');
+const userRoutes = require('./routes/user_routes');
+const userNovelRoutes = require('./routes/user_novel_routes');
 const scraperRoutes = require('./routes/scraper_route');
 
 const app = express();
@@ -25,6 +26,7 @@ app.use(express.json());
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/', userRoutes);
+app.use('/', userNovelRoutes);
 app.use('/api', scraperRoutes);
 
 app.listen(PORT, '0.0.0.0', function () {

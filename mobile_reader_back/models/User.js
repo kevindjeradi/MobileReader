@@ -30,15 +30,23 @@ const userSchema = new mongoose.Schema({
     novels: [{
         novelTitle: String, // novel title
         description: String, // novel description
+        isFavorite: Boolean, // true if the novel is a favorite
         numberOfChapters: Number, // number of chapters
         lastReadChapter: Number, // number of the last chapter the user was reading
-        lastReadChapterProgress: Number, // A value indicating how far the user has read in the last chapter
         lastReadAt: { type: Date, default: Date.now }, // When the user last read this novel
         chaptersRead: [{
             chapter: Number, // Chapter number
             progress: Number, // Optional, can track reading progress within each chapter
             readAt: { type: Date, default: Date.now }, // When the user read this chapter
         }],
+    }],
+    history: [{
+        novelTitle: String, // novel title
+        description: String, // novel description
+        isFavorite: Boolean, // true if the novel is a favorite
+        numberOfChapters: Number, // number of chapters
+        lastReadChapter: Number, // number of the last chapter the user was reading
+        lastReadAt: { type: Date, default: Date.now }, // When the user last read this novel
     }],
 });
 
