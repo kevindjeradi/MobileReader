@@ -91,5 +91,37 @@ router.patch('/user/updateLastRead', checkAuth, async (req, res) => {
     }
 });
 
+// Route to add a chapter to the chaptersRead list of a novel
+router.post('/user/addChapterRead', checkAuth, async (req, res) => {
+    const userId = req.userId; // Assuming userId is extracted from the token by checkAuth middleware
+    const { novelTitle, chapter, progress } = req.body; // Extracting details from request body
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Find the novel by title
+        const novel = user.novels.find(n => n.novelTitle === novelTitle);
+        if (novel) {
+            // Add the new chapter to chaptersRead, default readAt to now if not provided
+            const newChapter = {
+                chapter,
+                progress,
+                readAt: Date.now() // Default to current time
+            };
+            novel.chaptersRead.push(newChapter);
+            await user.save();
+            res.status(200).json({ message: 'Chapter added to chaptersRead successfully', novelTitle, newChapter });
+        } else {
+            res.status(404).json({ message: 'Novel not found in user list', novelTitle });
+        }
+    } catch (error) {
+        console.error('Error adding chapter to chaptersRead:', error);
+        res.status(500).json({ message: 'Error adding chapter to chaptersRead', error: error.message });
+    }
+});
+
 
 module.exports = router;
