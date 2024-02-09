@@ -38,5 +38,31 @@ router.post('/user/addNovel', checkAuth, async (req, res) => {
     }
 });
 
+// Route to update the isFavorite status of a novel
+router.patch('/user/updateFavoriteStatus', checkAuth, async (req, res) => {
+    const userId = req.userId; // Assuming userId is extracted from the token by checkAuth middleware
+    const { novelTitle, isFavorite } = req.body; // Extract novelTitle and isFavorite status from request body
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Find the novel in the user's novels list and update its isFavorite status
+        const novelIndex = user.novels.findIndex(novel => novel.novelTitle === novelTitle);
+        if (novelIndex !== -1) {
+            user.novels[novelIndex].isFavorite = isFavorite;
+            await user.save();
+            res.status(200).json({ message: 'Novel favorite status updated successfully', novelTitle, isFavorite });
+        } else {
+            res.status(404).json({ message: 'Novel not found in user list', novelTitle });
+        }
+    } catch (error) {
+        console.error('Error updating novel favorite status:', error);
+        res.status(500).json({ message: 'Error updating novel favorite status', error: error.message });
+    }
+});
+
 
 module.exports = router;
