@@ -123,5 +123,37 @@ router.post('/user/addChapterRead', checkAuth, async (req, res) => {
     }
 });
 
+// Route to remove a chapter from the chaptersRead list of a novel
+router.delete('/user/removeChapterRead', checkAuth, async (req, res) => {
+    const userId = req.userId; // Assuming userId is extracted from the token by checkAuth middleware
+    const { novelTitle, chapter } = req.body; // Extracting details from request body
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Find the novel by title
+        const novel = user.novels.find(n => n.novelTitle === novelTitle);
+        if (novel) {
+            // Filter out the chapter to be removed
+            const initialLength = novel.chaptersRead.length;
+            novel.chaptersRead = novel.chaptersRead.filter(c => c.chapter !== chapter);
+            if (initialLength === novel.chaptersRead.length) {
+                // If the lengths are equal, no chapter was removed
+                return res.status(404).json({ message: 'Chapter not found in chaptersRead', novelTitle, chapter });
+            }
+
+            await user.save();
+            res.status(200).json({ message: 'Chapter removed from chaptersRead successfully', novelTitle, chapter });
+        } else {
+            res.status(404).json({ message: 'Novel not found in user list', novelTitle });
+        }
+    } catch (error) {
+        console.error('Error removing chapter from chaptersRead:', error);
+        res.status(500).json({ message: 'Error removing chapter from chaptersRead', error: error.message });
+    }
+});
 
 module.exports = router;
