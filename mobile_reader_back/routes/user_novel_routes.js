@@ -64,5 +64,32 @@ router.patch('/user/updateFavoriteStatus', checkAuth, async (req, res) => {
     }
 });
 
+// Route to update the last read chapter and lastReadAt date for a novel
+router.patch('/user/updateLastRead', checkAuth, async (req, res) => {
+    const userId = req.userId; // Assuming userId is extracted from the token by checkAuth middleware
+    const { novelTitle, lastReadChapter } = req.body; // Extract novelTitle and lastReadChapter from request body
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Find the novel in the user's novels list and update lastReadChapter and lastReadAt
+        const novelIndex = user.novels.findIndex(novel => novel.novelTitle === novelTitle);
+        if (novelIndex !== -1) {
+            user.novels[novelIndex].lastReadChapter = lastReadChapter;
+            user.novels[novelIndex].lastReadAt = Date.now(); // Update lastReadAt to current time
+            await user.save();
+            res.status(200).json({ message: 'Novel last read updated successfully', novelTitle, lastReadChapter });
+        } else {
+            res.status(404).json({ message: 'Novel not found in user list', novelTitle });
+        }
+    } catch (error) {
+        console.error('Error updating novel last read:', error);
+        res.status(500).json({ message: 'Error updating novel last read', error: error.message });
+    }
+});
+
 
 module.exports = router;
