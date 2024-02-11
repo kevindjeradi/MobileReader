@@ -46,7 +46,6 @@ const userSchema = new mongoose.Schema({
         lastReadAt: { type: Date, default: Date.now }, // When the user last read this novel
         chaptersRead: [{
             chapter: Number, // Chapter number
-            progress: Number, // Optional, can track reading progress within each chapter
             readAt: { type: Date, default: Date.now }, // When the user read this chapter
         }],
     }],
@@ -64,7 +63,6 @@ const userSchema = new mongoose.Schema({
         lastReadAt: { type: Date, default: Date.now }, // When the user last read this novel
         chaptersRead: [{
             chapter: Number, // Chapter number
-            progress: Number, // Optional, can track reading progress within each chapter
             readAt: { type: Date, default: Date.now }, // When the user read this chapter
         }],
     }],
