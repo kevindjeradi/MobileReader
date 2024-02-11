@@ -87,7 +87,6 @@ router.get('/user/details', async (req, res) => {
             history: user.history,
         };
 
-        console.log("getting user details -> ", userDetails.novels[0].chaptersRead[0].progress);
         res.json(userDetails);
     } catch (error) {
         res.status(500).json({ error: error.message });
