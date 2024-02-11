@@ -22,16 +22,26 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    profileImage: {type: String, default: "/images/profile.png"},
+    profileImage: { type: String, default: "/images/profile.png" },
     settings: {
         theme: String,
     },
     friends: [{ type: String, ref: 'Users' }],
     novels: [{
         novelTitle: String, // novel title
+        author: String, // novel author
+        coverUrl: String, // novel coverUrl
         description: String, // novel description
-        isFavorite: Boolean, // true if the novel is a favorite
+        isFavorite: {
+            type: Boolean,
+            default: false,
+            required: true,
+        }, // true if the novel is a favorite
         numberOfChapters: Number, // number of chapters
+        chaptersDetails: [{
+            title: String, // Chapter title
+            link: String, // Chapter link
+        }],
         lastReadChapter: Number, // number of the last chapter the user was reading
         lastReadAt: { type: Date, default: Date.now }, // When the user last read this novel
         chaptersRead: [{
@@ -42,11 +52,21 @@ const userSchema = new mongoose.Schema({
     }],
     history: [{
         novelTitle: String, // novel title
+        author: String, // novel author
+        coverUrl: String, // novel coverUrl
         description: String, // novel description
-        isFavorite: Boolean, // true if the novel is a favorite
+        isFavorite: {
+            type: Boolean,
+            default: false
+        }, // true if the novel is a favorite
         numberOfChapters: Number, // number of chapters
         lastReadChapter: Number, // number of the last chapter the user was reading
         lastReadAt: { type: Date, default: Date.now }, // When the user last read this novel
+        chaptersRead: [{
+            chapter: Number, // Chapter number
+            progress: Number, // Optional, can track reading progress within each chapter
+            readAt: { type: Date, default: Date.now }, // When the user read this chapter
+        }],
     }],
 });
 
