@@ -19,18 +19,37 @@ router.get('/chapters', async (req, res) => {
     }
 
     try {
-        let chapters = await fetchChapters(novelUrl);
-        res.json(chapters);
+        let novelInfo = await fetchChapters(novelUrl);
+        res.json(novelInfo);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
 
 async function fetchChapters(initialUrl) {
-    let chapters = [];
+    let novelInfo = {};
     let currentPageUrl = initialUrl;
     let hasNextPage = true;
 
+    novelInfo.chapters = [];
+
+    // Fetch initial page content to initialize $
+    const initialPageResponse = await axios.get(currentPageUrl);
+    const $ = cheerio.load(initialPageResponse.data);
+
+    // Extract novel title
+    novelInfo.title = $('h3.title').first().text().trim();
+
+    // Extract author(s)
+    novelInfo.author = $('div.info > div').first().find('a').map((i, el) => $(el).text().trim()).get().join(', ');
+
+    // Extract novel description
+    novelInfo.description = $('div.desc-text').first().text().trim();
+
+    // Extract cover URL
+    novelInfo.coverUrl = BASE_URL + $('div.book img').attr('src');
+
+    // Extract list of chapters and chapters links
     while (hasNextPage) {
         const { data } = await axios.get(currentPageUrl);
         const $ = cheerio.load(data);
@@ -40,7 +59,7 @@ async function fetchChapters(initialUrl) {
                 title: $(elem).find('a').attr('title'),
                 link: BASE_URL + $(elem).find('a').attr('href'),
             };
-            chapters.push(chapter);
+            novelInfo.chapters.push(chapter);
         });
 
         // Check for the next page. Adjust the selector as needed based on the site's structure.
@@ -52,7 +71,7 @@ async function fetchChapters(initialUrl) {
         }
     }
 
-    return chapters;
+    return novelInfo;
 }
 
 // Route to fetch chapter content
@@ -74,7 +93,14 @@ async function fetchChapterContent(url) {
     const { data } = await axios.get(url);
     const $ = cheerio.load(data);
 
-    $('#chapter-content script, #chapter-content .ads, #chapter-content any-other-selector').remove();
+    $('#chapter-content script, #chapter-content .ads, #chapter-content div[id^="pf-"]').remove();
+
+    // Remove empty <p> tags
+    $('#chapter-content p').each(function () {
+        if ($(this).text().trim() === '') {
+            $(this).remove();
+        }
+    });
 
     let contentHtml = $('#chapter-content').html();
 

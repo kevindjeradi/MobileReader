@@ -70,10 +70,10 @@ router.get('/user/details', async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
 
-// Fetch friends' details using uniqueIdentifier
-const friendsDetails = await User.find({
-    'uniqueIdentifier': { $in: user.friends }
-}).select('username dateJoined profileImage');
+        // Fetch friends' details using uniqueIdentifier
+        const friendsDetails = await User.find({
+            'uniqueIdentifier': { $in: user.friends }
+        }).select('username dateJoined profileImage');
 
         // Return the required details
         const userDetails = {
@@ -87,7 +87,7 @@ const friendsDetails = await User.find({
             history: user.history,
         };
 
-        console.log(userDetails);
+        console.log("getting user details -> ", userDetails.novels[0].chaptersRead[0].progress);
         res.json(userDetails);
     } catch (error) {
         res.status(500).json({ error: error.message });
