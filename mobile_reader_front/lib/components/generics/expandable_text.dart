@@ -73,6 +73,8 @@ class ExpandableTextState extends State<ExpandableText>
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: toggleExpanded,
       child: Column(
@@ -103,6 +105,7 @@ class ExpandableTextState extends State<ExpandableText>
               children: <Widget>[
                 Icon(
                   isExpanded ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                  color: theme.colorScheme.onBackground,
                 ),
               ],
             ),
