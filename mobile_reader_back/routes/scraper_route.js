@@ -113,4 +113,47 @@ async function fetchChapterContent(url) {
     return contentHtml;
 }
 
+// Route to search novels
+router.get('/search', async (req, res) => {
+    const { keyword } = req.query; // Expecting a query parameter for the search keyword
+    if (!keyword) {
+        return res.status(400).json({ message: 'Search keyword is required' });
+    }
+
+    const searchUrl = `${BASE_URL}/search?keyword=${encodeURIComponent(keyword)}`;
+
+    try {
+        const novels = await fetchSearchResults(searchUrl);
+        res.json(novels);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+async function fetchSearchResults(url) {
+    const { data } = await axios.get(url);
+    const $ = cheerio.load(data);
+
+    let novels = [];
+
+    $('.list-truyen .row').each((index, element) => {
+        const imageUrlSuffix = $(element).find('img.cover').attr('src');
+        const title = $(element).find('h3.truyen-title a').text().trim();
+        const novelUrlSuffix = $(element).find('h3.truyen-title a').attr('href');
+
+        // Check if any of the crucial information is missing or undefined
+        if (!imageUrlSuffix || !title || !novelUrlSuffix) {
+            // Skip this entry if any crucial information is missing
+            return;
+        }
+
+        const imageUrl = BASE_URL + imageUrlSuffix;
+        const novelUrl = BASE_URL + novelUrlSuffix;
+
+        novels.push({ imageUrl, title, novelUrl });
+    });
+
+    return novels;
+}
+
 module.exports = router;
