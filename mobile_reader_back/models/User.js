@@ -28,42 +28,42 @@ const userSchema = new mongoose.Schema({
     },
     friends: [{ type: String, ref: 'Users' }],
     novels: [{
-        novelTitle: String, // novel title
-        author: String, // novel author
-        coverUrl: String, // novel coverUrl
-        description: String, // novel description
+        novelTitle: String,
+        author: String,
+        coverUrl: String,
+        description: String,
         isFavorite: {
             type: Boolean,
             default: false,
             required: true,
-        }, // true if the novel is a favorite
-        numberOfChapters: Number, // number of chapters
+        },
+        numberOfChapters: Number,
         chaptersDetails: [{
-            title: String, // Chapter title
-            link: String, // Chapter link
+            title: String,
+            link: String,
         }],
-        lastReadChapter: Number, // number of the last chapter the user was reading
-        lastReadAt: { type: Date, default: Date.now }, // When the user last read this novel
+        lastReadChapter: Number,
+        lastReadAt: { type: Date, default: Date.now },
         chaptersRead: [{
-            chapter: Number, // Chapter number
-            readAt: { type: Date, default: Date.now }, // When the user read this chapter
+            chapter: Number,
+            readAt: { type: Date, default: Date.now },
         }],
     }],
     history: [{
-        novelTitle: String, // novel title
-        author: String, // novel author
-        coverUrl: String, // novel coverUrl
-        description: String, // novel description
+        novelTitle: String,
+        author: String,
+        coverUrl: String,
+        description: String,
         isFavorite: {
             type: Boolean,
             default: false
-        }, // true if the novel is a favorite
-        numberOfChapters: Number, // number of chapters
-        lastReadChapter: Number, // number of the last chapter the user was reading
-        lastReadAt: { type: Date, default: Date.now }, // When the user last read this novel
+        },
+        numberOfChapters: Number,
+        lastReadChapter: Number,
+        lastReadAt: { type: Date, default: Date.now },
         chaptersRead: [{
-            chapter: Number, // Chapter number
-            readAt: { type: Date, default: Date.now }, // When the user read this chapter
+            chapter: Number,
+            readAt: { type: Date, default: Date.now },
         }],
     }],
 });
