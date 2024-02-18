@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Route to add a novel to the user's list
 router.post('/user/addNovel', checkAuth, async (req, res) => {
-    const userId = req.userId; // Assuming userId is extracted from the token by checkAuth middleware
+    const userId = req.userId; // userId is extracted from the token by checkAuth middleware
     const { novelDetails } = req.body;
 
     const { novelTitle, description, coverUrl, author, numberOfChapters, chaptersDetails } = novelDetails;
@@ -43,10 +43,10 @@ router.post('/user/addNovel', checkAuth, async (req, res) => {
     }
 });
 
-// Route to update the isFavorite status of a novel
+// Route to update the favorite status of a novel
 router.patch('/user/updateFavoriteStatus', checkAuth, async (req, res) => {
-    const userId = req.userId; // Assuming userId is extracted from the token by checkAuth middleware
-    const { novelTitle, isFavorite } = req.body; // Extract novelTitle and isFavorite status from request body
+    const userId = req.userId; // userId is extracted from the token by checkAuth middleware
+    const { novelTitle, isFavorite } = req.body;
 
     try {
         const user = await User.findById(userId);
@@ -54,7 +54,7 @@ router.patch('/user/updateFavoriteStatus', checkAuth, async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Find the novel in the user's novels list and update its isFavorite status
+        // Find the novel in the user's novels list and update its favorite status
         const novelIndex = user.novels.findIndex(novel => novel.novelTitle === novelTitle);
         if (novelIndex !== -1) {
             user.novels[novelIndex].isFavorite = isFavorite;
@@ -71,8 +71,8 @@ router.patch('/user/updateFavoriteStatus', checkAuth, async (req, res) => {
 
 // Route to update the last read chapter and lastReadAt date for a novel
 router.patch('/user/updateLastRead', checkAuth, async (req, res) => {
-    const userId = req.userId; // Assuming userId is extracted from the token by checkAuth middleware
-    const { novelTitle, lastReadChapter } = req.body; // Extract novelTitle and lastReadChapter from request body
+    const userId = req.userId; // suserId is extracted from the token by checkAuth middleware
+    const { novelTitle, lastReadChapter } = req.body;
 
     try {
         const user = await User.findById(userId);
@@ -98,8 +98,8 @@ router.patch('/user/updateLastRead', checkAuth, async (req, res) => {
 
 // Route to add a chapter to the chaptersRead list or update an existing one
 router.post('/user/addChapterRead', checkAuth, async (req, res) => {
-    const userId = req.userId; // Assuming userId is extracted from the token by checkAuth middleware
-    const { novelTitle, chapter } = req.body; // Extracting details from request body
+    const userId = req.userId; // userId is extracted from the token by checkAuth middleware
+    const { novelTitle, chapter } = req.body;
 
     try {
         const user = await User.findById(userId);
@@ -117,13 +117,13 @@ router.post('/user/addChapterRead', checkAuth, async (req, res) => {
         const chapterIndex = novel.chaptersRead.findIndex(c => c.chapter === chapter);
 
         if (chapterIndex !== -1) {
-            // Chapter exists, update readAt
+            // Chapter exists, update
             novel.chaptersRead[chapterIndex].readAt = Date.now();
         } else {
-            // Chapter does not exist, add new
+            // Chapter does not exist, add
             novel.chaptersRead.push({
                 chapter,
-                readAt: Date.now() // Default to current time
+                readAt: Date.now()
             });
         }
 
@@ -137,8 +137,8 @@ router.post('/user/addChapterRead', checkAuth, async (req, res) => {
 
 // Route to remove a chapter from the chaptersRead list of a novel
 router.delete('/user/removeChapterRead', checkAuth, async (req, res) => {
-    const userId = req.userId; // Assuming userId is extracted from the token by checkAuth middleware
-    const { novelTitle, chapter } = req.body; // Extracting details from request body
+    const userId = req.userId; // userId is extracted from the token by checkAuth middleware
+    const { novelTitle, chapter } = req.body;
 
     try {
         const user = await User.findById(userId);
@@ -149,7 +149,6 @@ router.delete('/user/removeChapterRead', checkAuth, async (req, res) => {
         // Find the novel by title
         const novel = user.novels.find(n => n.novelTitle === novelTitle);
         if (novel) {
-            // Filter out the chapter to be removed
             const initialLength = novel.chaptersRead.length;
             novel.chaptersRead = novel.chaptersRead.filter(c => c.chapter !== chapter);
             if (initialLength === novel.chaptersRead.length) {
@@ -170,8 +169,8 @@ router.delete('/user/removeChapterRead', checkAuth, async (req, res) => {
 
 // Route to add or update a novel in the user's history, ensuring the most recently read novel is first
 router.post('/user/addOrUpdateHistory', checkAuth, async (req, res) => {
-    const userId = req.userId; // Assuming userId is extracted from the token by checkAuth middleware
-    const { novelTitle } = req.body; // Now we are only expecting novelTitle in the request body
+    const userId = req.userId; // userId is extracted from the token by checkAuth middleware
+    const { novelTitle } = req.body;
 
     try {
         const user = await User.findById(userId);
@@ -179,7 +178,7 @@ router.post('/user/addOrUpdateHistory', checkAuth, async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Attempt to find the novel in the user's existing novels list by title
+        // find the novel in the novels list by title
         const novel = user.novels.find(n => n.novelTitle === novelTitle);
         if (novel) {
             // If the novel exists in the user's list, prepare the history entry
@@ -190,7 +189,7 @@ router.post('/user/addOrUpdateHistory', checkAuth, async (req, res) => {
                 description: novel.description,
                 numberOfChapters: novel.numberOfChapters,
                 lastReadChapter: novel.lastReadChapter,
-                lastReadAt: Date.now(), // Update lastReadAt to current time
+                lastReadAt: Date.now(),
             };
 
             // Check if the novel already exists in the history
