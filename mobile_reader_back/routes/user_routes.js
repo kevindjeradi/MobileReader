@@ -95,7 +95,7 @@ router.get('/user/details', async (req, res) => {
 
 // friends
 router.post('/user/addFriend', checkAuth, async (req, res) => {
-    const userId = req.userId; // Extracted from the JWT token by your middleware
+    const userId = req.userId;
     const { friendId } = req.body;
 
     try {
@@ -110,13 +110,8 @@ router.post('/user/addFriend', checkAuth, async (req, res) => {
             console.log("Already friends");
             return res.status(400).json({ error: 'Already friends' });
         }
-        console.log("Trying to add friend");
-        // Add friend
         user.friends.push(friendId);
-        console.log("Added friend");
         await user.save();
-        console.log("Saved friend");
-
         res.json({ message: 'Friend added successfully' });
     } catch (error) {
         console.log("Add friend error: " + error.message);
