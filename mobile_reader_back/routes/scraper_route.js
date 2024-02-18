@@ -8,7 +8,6 @@ const BASE_URL = 'https://novelfull.net';
 
 // Route to fetch chapters list
 router.get('/chapters', async (req, res) => {
-    // Accept novelUrl from query parameters instead of hardcoding
     const novelUrl = req.query.novelUrl;
 
     // const novelUrl = `${BASE_URL}/library-of-heavens-path.html`;
@@ -62,7 +61,7 @@ async function fetchChapters(initialUrl) {
             novelInfo.chapters.push(chapter);
         });
 
-        // Check for the next page. Adjust the selector as needed based on the site's structure.
+        // Check for the next page.
         const nextPageLink = $('.pagination.pagination-sm li.next a').attr('href');
         if (nextPageLink) {
             currentPageUrl = BASE_URL + nextPageLink;
@@ -76,7 +75,7 @@ async function fetchChapters(initialUrl) {
 
 // Route to fetch chapter content
 router.get('/chapter-content', async (req, res) => {
-    const { chapterUrl } = req.query; // Expecting a query parameter for the chapter URL
+    const { chapterUrl } = req.query;
     if (!chapterUrl) {
         return res.status(400).json({ message: 'Chapter URL is required' });
     }
@@ -106,7 +105,7 @@ async function fetchChapterContent(url) {
 
     contentHtml = contentHtml
         .replace(/\t/g, '') // Remove all tab characters
-        .replace(/\\+/g, '') // Remove backslashes, adjust regex as needed for your case
+        .replace(/\\+/g, '') // Remove backslashes
         .replace(/\"(.*?)\"/g, '<i>$1</i>') // Replace escaped quotes with <i>
         .replace(/\s{2,}/g, ' '); // Replace multiple whitespace characters with a single space
 
@@ -115,7 +114,8 @@ async function fetchChapterContent(url) {
 
 // Route to search novels
 router.get('/search', async (req, res) => {
-    const { keyword } = req.query; // Expecting a query parameter for the search keyword
+    const { keyword } = req.query;
+
     if (!keyword) {
         return res.status(400).json({ message: 'Search keyword is required' });
     }
