@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_reader_front/components/generics/custom_navigation.dart';
 import 'package:mobile_reader_front/components/generics/custom_snackbar.dart';
 import 'package:mobile_reader_front/services/user_service.dart';
 import 'package:mobile_reader_front/views/social/add_friend.dart';
+import 'package:mobile_reader_front/views/social/friends_list.dart';
 import 'package:mobile_reader_front/views/social/scan_qr.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:provider/provider.dart';
@@ -74,6 +76,25 @@ class QrCodeSection extends StatelessWidget {
                             color: theme.colorScheme.onBackground),
                         eyeStyle:
                             QrEyeStyle(color: theme.colorScheme.onBackground),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.resolveWith(
+                              (states) => theme.colorScheme.surface),
+                          foregroundColor: MaterialStateProperty.resolveWith(
+                              (states) => theme.colorScheme.onBackground)),
+                      onPressed: () {
+                        CustomNavigation.push(context, const FriendsList());
+                      },
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.people_alt),
+                          SizedBox(width: 10),
+                          Text("Vos amis"),
+                        ],
                       ),
                     ),
                     const SizedBox(height: 10),
