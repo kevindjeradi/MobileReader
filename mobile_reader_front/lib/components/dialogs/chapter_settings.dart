@@ -5,20 +5,20 @@ import 'package:mobile_reader_front/provider/theme_color_scheme_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// chapter_settings.dart
-
 class ChapterSettings extends StatefulWidget {
   final double initialFontSize;
-  final double initialAutoScrollSpeed; // Add this line
+  final double initialAutoScrollSpeed;
+  final bool isAutoScrolling;
   final Function(double) onFontSizeChanged;
-  final Function(double) onAutoScrollSpeedChanged; // Add this line
+  final Function(double) onAutoScrollSpeedChanged;
 
   const ChapterSettings({
     Key? key,
     required this.initialFontSize,
     required this.onFontSizeChanged,
-    required this.initialAutoScrollSpeed, // Add this line
-    required this.onAutoScrollSpeedChanged, // Add this line
+    required this.isAutoScrolling,
+    required this.initialAutoScrollSpeed,
+    required this.onAutoScrollSpeedChanged,
   }) : super(key: key);
 
   @override
@@ -44,7 +44,6 @@ class ChapterSettingsState extends State<ChapterSettings> {
   }
 
   Future<void> _saveAutoScrollSpeed(double speed) async {
-    // Add this method
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('autoScrollSpeed', speed);
     widget.onAutoScrollSpeedChanged(speed);
@@ -83,10 +82,12 @@ class ChapterSettingsState extends State<ChapterSettings> {
                 min: 10.0,
                 max: 32.0,
                 value: _fontSize,
-                onChanged: (double value) {
-                  setState(() => _fontSize = value);
-                  _saveFontSize(_fontSize);
-                },
+                onChanged: widget.isAutoScrolling
+                    ? null
+                    : (double value) {
+                        setState(() => _fontSize = value);
+                        _saveFontSize(_fontSize);
+                      },
               ),
               const SizedBox(height: 16),
               Row(
