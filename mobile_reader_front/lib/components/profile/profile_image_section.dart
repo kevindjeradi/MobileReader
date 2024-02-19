@@ -83,21 +83,18 @@ class ProfileImageSection extends StatelessWidget {
 
         // Use the setUserProfileImage to upload the image
         await Api().setUserProfileImage(image).then((response) {
-          // Assuming response contains the URL of the image
           String newImageUrl = response['profileImage'];
           String finalImageUrl = newImageUrl;
 
           // Update the userProvider with the new image URL
           userProvider.updateProfileImage(finalImageUrl);
 
-          // Show a success message
           showCustomSnackBar(
             context,
             "Profile image updated successfully!",
             SnackBarType.success,
           );
         }).catchError((error) {
-          // Show an error message
           showCustomSnackBar(
             context,
             "Error updating profile image: $error",
