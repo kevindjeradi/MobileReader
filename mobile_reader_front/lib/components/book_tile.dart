@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_reader_front/components/generic/custom_snackbar.dart';
+import 'package:mobile_reader_front/components/generics/custom_snackbar.dart';
+import 'package:mobile_reader_front/handlers/novel_detail_handler.dart';
 import 'package:mobile_reader_front/helpers/logger.dart';
 import 'package:mobile_reader_front/models/novel.dart';
 import 'package:mobile_reader_front/provider/user_provider.dart';
 import 'package:mobile_reader_front/services/novel_service.dart';
 import 'package:mobile_reader_front/views/novel_detail.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BookTile extends StatefulWidget {
   final Novel novel;
@@ -24,12 +26,28 @@ class BookTile extends StatefulWidget {
 }
 
 class BookTileState extends State<BookTile> {
+  late SharedPreferences prefs;
+  late NovelDetailHandler novelDetailHandler;
   late bool isFavorite;
 
   @override
   void initState() {
     super.initState();
     isFavorite = widget.novel.isFavorite;
+    _initPrefsAndNovelDetailHandler();
+  }
+
+  Future<void> _initPrefsAndNovelDetailHandler() async {
+    prefs = await SharedPreferences.getInstance();
+
+    if (mounted) {
+      novelDetailHandler = NovelDetailHandler(
+        novel: widget.novel,
+        prefs: prefs,
+        context: context,
+      );
+    }
+    setState(() {});
   }
 
   void _toggleFavorite() async {
@@ -89,10 +107,14 @@ class BookTileState extends State<BookTile> {
                 ? Expanded(
                     child: Stack(
                       children: [
-                        Center(
-                          child: Image.network(
-                            widget.novel.coverUrl,
-                            fit: BoxFit.cover,
+                        GestureDetector(
+                          onTap: () => novelDetailHandler
+                              .navigateToLastReadChapter(context),
+                          child: Center(
+                            child: Image.network(
+                              widget.novel.coverUrl,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         Positioned(
@@ -116,10 +138,14 @@ class BookTileState extends State<BookTile> {
                     ),
                   )
                 : Expanded(
-                    child: Center(
-                      child: Image.network(
-                        widget.novel.coverUrl,
-                        fit: BoxFit.cover,
+                    child: GestureDetector(
+                      onTap: () =>
+                          novelDetailHandler.navigateToLastReadChapter(context),
+                      child: Center(
+                        child: Image.network(
+                          widget.novel.coverUrl,
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                   ),
