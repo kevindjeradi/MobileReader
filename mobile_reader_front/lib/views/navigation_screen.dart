@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_reader_front/views/add_novel.dart';
 import 'package:mobile_reader_front/views/home.dart';
 import 'package:mobile_reader_front/views/library.dart';
+import 'package:mobile_reader_front/views/profile.dart';
 
 class NavigationScreen extends StatefulWidget {
   const NavigationScreen({super.key});
@@ -14,9 +16,9 @@ class NavigationScreenState extends State<NavigationScreen> {
 
   static final List<Widget> _widgetOptions = <Widget>[
     const Home(),
-    const Text('Rechercher (à venir)'),
+    const AddNovel(),
     const Library(),
-    const Text('Réglages (à venir)'),
+    const Profile(),
   ];
 
   void _onItemTapped(int index) {
@@ -28,6 +30,7 @@ class NavigationScreenState extends State<NavigationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       body: SafeArea(
         child: Center(
           child: _widgetOptions.elementAt(_selectedIndex),
@@ -53,15 +56,16 @@ class NavigationScreenState extends State<NavigationScreen> {
               label: 'Bibliothèque',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.settings),
-              label: 'Réglages',
+              icon: Icon(Icons.people),
+              label: 'Profil',
             ),
           ],
           currentIndex: _selectedIndex,
           onTap: _onItemTapped,
           showSelectedLabels: false,
           showUnselectedLabels: false,
-          backgroundColor: Colors.transparent,
+          backgroundColor: Theme.of(context).colorScheme.background,
+          selectedItemColor: Theme.of(context).colorScheme.onBackground,
           type: BottomNavigationBarType.fixed,
         ),
       ),
