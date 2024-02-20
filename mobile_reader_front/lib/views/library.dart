@@ -1,21 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_reader_front/components/book_tile.dart';
-import 'package:mobile_reader_front/models/book.dart';
+import 'package:mobile_reader_front/provider/user_provider.dart';
+import 'package:provider/provider.dart';
 
 class Library extends StatelessWidget {
   const Library({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final userProvider = Provider.of<UserProvider>(context);
+    final novels = userProvider.novels;
+
+    final favoriteNovels = novels.where((novel) => novel.isFavorite).toList();
+
+    Widget favoritesSection = favoriteNovels.isNotEmpty
+        ? SizedBox(
+            height: MediaQuery.of(context).size.height * 0.3,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: favoriteNovels.length,
+              itemBuilder: (context, index) {
+                return BookTile(
+                  showFavorite: false,
+                  novel: favoriteNovels[index],
+                );
+              },
+            ),
+          )
+        : const Expanded(
+            child: Center(child: Text("Aucun favori")),
+          );
+
+    Widget librarySection = novels.isNotEmpty
+        ? Expanded(
+            child: GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+              ),
+              itemCount: novels.length,
+              itemBuilder: (context, index) {
+                return BookTile(
+                  novel: novels[index],
+                );
+              },
+            ),
+          )
+        : const Expanded(
+            child: Center(child: Text("Aucun novel dans votre bibliothèque")),
+          );
+
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
-        title: const Text('Bibiliothèque'),
+        foregroundColor: theme.colorScheme.onBackground,
+        title: const Text('Bibliothèque'),
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16),
-        children: <Widget>[
+      body: Column(
+        children: [
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
@@ -23,44 +67,17 @@ class Library extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
-          SizedBox(
-            height: 250,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: mockDataBooks.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: BookTile(
-                    book: mockDataBooks[index],
-                  ),
-                );
-              },
-            ),
-          ),
+          favoritesSection,
           const SizedBox(height: 20),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 8.0),
             child: Text(
-              'Téléchargés',
+              'Vos novels enregistrés',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
-          SizedBox(
-            height: 250,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: mockDataBooks.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: BookTile(
-                    book: mockDataBooks[index],
-                  ),
-                );
-              },
-            ),
-          ),
+          const SizedBox(height: 20),
+          librarySection,
         ],
       ),
     );
