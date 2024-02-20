@@ -5,8 +5,7 @@ import 'package:mobile_reader_front/helpers/logger.dart';
 import 'package:mobile_reader_front/services/api.dart';
 
 class ThemeColorSchemeProvider with ChangeNotifier {
-  static final String baseUrl = dotenv.env['API_URL'] ??
-      'http://10.0.2.2:3000'; // Default URL if .env is not loaded
+  static final String baseUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:3000';
 
   TextTheme _getTextTheme(ColorScheme colorScheme) {
     return TextTheme(

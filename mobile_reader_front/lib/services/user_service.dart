@@ -7,8 +7,7 @@ import 'package:mobile_reader_front/services/api.dart';
 import 'package:mobile_reader_front/services/token_service.dart';
 
 class UserService {
-  static final String baseUrl = dotenv.env['API_URL'] ??
-      'http://10.0.2.2:3000'; // Default URL if .env is not loaded
+  static final String baseUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:3000';
 
   Future<Map<String, dynamic>> signup(String username, String password) async {
     try {
@@ -78,14 +77,14 @@ class UserService {
       );
 
       if (response.statusCode == 200) {
-        return true; // Friend added successfully
+        return true;
       } else {
         Log.logger.e('Failed to add friend: ${response.body}');
-        return false; // Failed to add friend
+        return false;
       }
     } catch (e) {
       Log.logger.e("An error occurred while adding friend: $e");
-      return false; // An error occurred
+      return false;
     }
   }
 

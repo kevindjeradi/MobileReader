@@ -39,8 +39,7 @@ class User {
               json['novels'].map((novel) => Novel.fromJson(novel)))
           : [],
       historyNovels: List<Novel>.from(
-          json['history']?.map((novel) => Novel.fromJson(novel)) ??
-              []), // Add this line
+          json['history']?.map((novel) => Novel.fromJson(novel)) ?? []),
     );
   }
 }

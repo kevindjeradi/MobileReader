@@ -1,8 +1,8 @@
 // login_page.dart
 import 'package:flutter/material.dart';
-import 'package:mobile_reader_front/components/generic/custom_loader.dart';
-import 'package:mobile_reader_front/components/generic/custom_navigation.dart';
-import 'package:mobile_reader_front/components/generic/custom_snackbar.dart';
+import 'package:mobile_reader_front/components/generics/custom_loader.dart';
+import 'package:mobile_reader_front/components/generics/custom_navigation.dart';
+import 'package:mobile_reader_front/components/generics/custom_snackbar.dart';
 import 'package:mobile_reader_front/provider/theme_color_scheme_provider.dart';
 import 'package:mobile_reader_front/provider/user_provider.dart';
 import 'package:mobile_reader_front/services/api.dart';
@@ -91,14 +91,12 @@ class LoginPageState extends State<LoginPage> {
               context, 'Connecté avec succès', SnackBarType.success);
         }
       } else {
-        // Show error message
         if (mounted) {
           showCustomSnackBar(
               context, 'Impossible de se connecter', SnackBarType.error);
         }
       }
     } catch (error) {
-      // Show error message
       if (mounted) {
         showCustomSnackBar(
             context, 'Une erreur est survenue -> $error', SnackBarType.error);

@@ -151,7 +151,7 @@ class _ChapterTileState extends State<ChapterTile> {
                             icon: const Icon(Icons.download_outlined),
                             label: const Text('Télécharger le chapitre'),
                             onPressed: () {
-                              Navigator.pop(context); // Close the bottom sheet
+                              Navigator.pop(context);
                               _downloadChapterContent(
                                   context,
                                   widget.chapterDetail.link,

@@ -1,8 +1,8 @@
 // register_page.dart
 import 'package:flutter/material.dart';
-import 'package:mobile_reader_front/components/generic/custom_loader.dart';
-import 'package:mobile_reader_front/components/generic/custom_navigation.dart';
-import 'package:mobile_reader_front/components/generic/custom_snackbar.dart';
+import 'package:mobile_reader_front/components/generics/custom_loader.dart';
+import 'package:mobile_reader_front/components/generics/custom_navigation.dart';
+import 'package:mobile_reader_front/components/generics/custom_snackbar.dart';
 import 'package:mobile_reader_front/helpers/logger.dart';
 import 'package:mobile_reader_front/provider/auth_provider.dart';
 import 'package:mobile_reader_front/provider/user_provider.dart';

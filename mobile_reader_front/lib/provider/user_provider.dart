@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:mobile_reader_front/helpers/logger.dart';
 import 'package:mobile_reader_front/models/novel.dart';
-import 'package:mobile_reader_front/models/user.dart'; // Import User model
+import 'package:mobile_reader_front/models/user.dart';
 
 final String baseUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:3000';
 
@@ -26,7 +26,7 @@ class UserProvider extends ChangeNotifier {
         username: _user!.username,
         uniqueIdentifier: _user!.uniqueIdentifier,
         dateJoined: _user!.dateJoined,
-        profileImage: newImageUrl, // Update the profile image
+        profileImage: newImageUrl,
         theme: _user!.theme,
         friends: _user!.friends,
         novels: _user!.novels,
@@ -45,10 +45,9 @@ class UserProvider extends ChangeNotifier {
         final updatedNovel = _user!.novels[novelIndex].copyWith(
           isFavorite: !_user!.novels[novelIndex].isFavorite,
         );
-        // Update the novel in the list
         _user!.novels[novelIndex] = updatedNovel;
         Log.logger.i("Novel updated: ${updatedNovel.isFavorite}");
-        // Notify listeners about the change
+
         notifyListeners();
       }
     }

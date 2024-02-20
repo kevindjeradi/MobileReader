@@ -1,6 +1,6 @@
 class Chapter {
   final int chapter;
-  final DateTime readAt; // When the user last read this chapter
+  final DateTime readAt;
 
   Chapter({
     required this.chapter,
