@@ -28,8 +28,9 @@ class Library extends StatelessWidget {
               },
             ),
           )
-        : const Expanded(
-            child: Center(child: Text("Aucun favori")),
+        : SizedBox(
+            height: MediaQuery.of(context).size.height * 0.2,
+            child: const Center(child: Text("Vous n'avez aucun favori")),
           );
 
     Widget librarySection = novels.isNotEmpty
@@ -46,8 +47,11 @@ class Library extends StatelessWidget {
               },
             ),
           )
-        : const Expanded(
-            child: Center(child: Text("Aucun novel dans votre bibliothèque")),
+        : SizedBox(
+            height: MediaQuery.of(context).size.height * 0.2,
+            child: const Center(
+                child: Text(
+                    "Vous n'avez ajouté aucun novel dans votre bibliothèque")),
           );
 
     return Scaffold(

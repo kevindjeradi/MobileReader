@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobile_reader_front/components/generics/custom_loader.dart';
 import 'package:mobile_reader_front/provider/auth_provider.dart';
@@ -17,16 +18,33 @@ class AuthCheck extends StatefulWidget {
 
 class AuthCheckState extends State<AuthCheck> {
   late Future<void> _checkAuth;
+  bool _showRetry = false;
 
   @override
   void initState() {
     super.initState();
+    _initializeAuthCheck();
+  }
+
+  void _initializeAuthCheck() {
     _checkAuth =
         Provider.of<AuthProvider>(context, listen: false).checkAuthStatus();
+    setState(() {
+      _showRetry = false;
+    });
+    Timer(const Duration(seconds: 5), () {
+      if (mounted && !_showRetry) {
+        setState(() {
+          _showRetry = true;
+        });
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return FutureBuilder<void>(
       future: _checkAuth,
       builder: (context, snapshot) {
@@ -56,10 +74,34 @@ class AuthCheckState extends State<AuthCheck> {
           } else {
             return const LoginPage();
           }
-        } else {
-          return const Scaffold(
-            body: CustomLoader(),
+        } else if (_showRetry) {
+          return Scaffold(
+            backgroundColor: theme.colorScheme.background,
+            body: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Problème de connexion"),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.resolveWith(
+                            (states) => theme.colorScheme.surface),
+                        foregroundColor: MaterialStateProperty.resolveWith(
+                            (states) => theme.colorScheme.onBackground)),
+                    onPressed: () {
+                      _initializeAuthCheck();
+                    },
+                    child: const Text("Réessayer ?"),
+                  ),
+                ],
+              ),
+            ),
           );
+        } else {
+          // If the future is not done and the retry indicator is false, show loader
+          return Scaffold(
+              backgroundColor: theme.colorScheme.background,
+              body: const CustomLoader());
         }
       },
     );

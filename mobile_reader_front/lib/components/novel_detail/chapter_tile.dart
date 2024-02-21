@@ -49,7 +49,7 @@ class _ChapterTileState extends State<ChapterTile> {
     if (await _isChapterDownloaded(chapterTitle)) {
       if (mounted) {
         showCustomSnackBar(
-            context, 'Chapter already downloaded', SnackBarType.info);
+            context, 'Le chapitre à déjà été téléchargé', SnackBarType.info);
       }
       return;
     }
@@ -58,14 +58,14 @@ class _ChapterTileState extends State<ChapterTile> {
       await widget.prefs.setString(chapterTitle, content);
       if (mounted) {
         showCustomSnackBar(
-            context, "Chapter downloaded successfully", SnackBarType.success);
+            context, "Le chapitre a été téléchargé", SnackBarType.success);
       }
       _updateDownloadStatus();
     } catch (e) {
       Log.logger.e("Error downloading chapter: $e");
       if (mounted) {
-        showCustomSnackBar(
-            context, "Failed to download chapter", SnackBarType.error);
+        showCustomSnackBar(context, "Impossible de télécharger le chapitre",
+            SnackBarType.error);
       }
     }
   }

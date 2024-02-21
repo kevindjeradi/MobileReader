@@ -29,6 +29,7 @@ class _NovelDetailState extends State<NovelDetail> {
   final int chaptersPerPage = 120;
   int get totalPages =>
       (widget.novel.numberOfChapters / chaptersPerPage).ceil();
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -56,6 +57,10 @@ class _NovelDetailState extends State<NovelDetail> {
         min((currentPage + 1) * chaptersPerPage, widget.novel.numberOfChapters);
     late bool success;
 
+    setState(() {
+      isLoading = true;
+    });
+
     for (int i = startChapterIndex; i < endChapterIndex; i++) {
       final ChaptersDetails chapter = widget.novel.chaptersDetails[i];
       final bool isDownloaded =
@@ -77,7 +82,11 @@ class _NovelDetailState extends State<NovelDetail> {
 
     // Refresh the download status after downloading chapters
     chaptersDownloaded = await novelDetailHandler.preloadChapterStatuses();
-    if (mounted) setState(() {});
+    if (mounted) {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -134,7 +143,7 @@ class _NovelDetailState extends State<NovelDetail> {
                               foregroundColor:
                                   MaterialStateProperty.resolveWith((states) =>
                                       theme.colorScheme.onBackground)),
-                          onPressed: _downloadUnreadChapters,
+                          onPressed: isLoading ? null : _downloadUnreadChapters,
                           child: const Text(
                               'Télécharger les chapitres de cette page'),
                         ),

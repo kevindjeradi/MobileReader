@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_reader_front/components/add_novel/novel_details_widget.dart';
 import 'package:mobile_reader_front/components/generics/custom_loader.dart';
 import 'package:mobile_reader_front/components/generics/custom_snackbar.dart';
+import 'package:mobile_reader_front/helpers/logger.dart';
 import 'package:mobile_reader_front/provider/user_provider.dart';
 import 'package:mobile_reader_front/services/api.dart';
 import 'package:mobile_reader_front/services/novel_service.dart';
@@ -25,6 +26,7 @@ class AddNovelState extends State<AddNovel> {
   List<dynamic> _searchResults = [];
   bool _isPageLoading = false;
   bool _isNovelLoading = false;
+  bool _isSearching = false;
   Map<String, dynamic>? novelDetails;
 
   @override
@@ -55,15 +57,22 @@ class AddNovelState extends State<AddNovel> {
   }
 
   Future<void> _performSearch(String query) async {
+    setState(() {
+      _isSearching = true; // Start searching
+    });
     try {
       final results = await NovelService.searchNovels(query);
       if (mounted) {
         setState(() {
           _searchResults = results;
+          _isSearching = false; // Search completed
         });
       }
     } catch (e) {
       if (mounted) {
+        setState(() {
+          _isSearching = false; // Search failed
+        });
         showCustomSnackBar(
             context, "Failed to search novels", SnackBarType.error);
       }
@@ -105,7 +114,9 @@ class AddNovelState extends State<AddNovel> {
 
   Widget _buildSearchResults() {
     if (_searchResults.isEmpty) {
-      return const SizedBox();
+      return _searchController.text.length < 3
+          ? const SizedBox()
+          : const Text('Aucun résultat trouvé');
     }
     return ListView.builder(
       shrinkWrap: true,
@@ -125,7 +136,7 @@ class AddNovelState extends State<AddNovel> {
   void _addNovel() async {
     if (novelDetails != null) {
       final payload = {
-        'novelTitle': novelDetails!['title'],
+        'title': novelDetails!['title'],
         'author': novelDetails!['author'],
         'coverUrl': novelDetails!['coverUrl'],
         'description': novelDetails!['description'],
@@ -159,9 +170,9 @@ class AddNovelState extends State<AddNovel> {
         setState(() {
           _isNovelLoading = false;
         });
-        if (mounted) Navigator.pop(context);
       } catch (e) {
         if (mounted) {
+          Log.logger.e("An error occurred in _addNovel: $e");
           showCustomSnackBar(
               context, "Impossible d'ajouter le novel", SnackBarType.error);
         }
@@ -200,8 +211,12 @@ class AddNovelState extends State<AddNovel> {
                       ),
                     ),
                     const SizedBox(height: 20),
+                    if (_isPageLoading || _isSearching)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 8.0),
+                        child: CustomLoader(),
+                      ),
                     _buildSearchResults(),
-                    if (_isPageLoading) const CustomLoader(),
                     if (novelDetails != null) ...[
                       NovelDetailsWidget(
                         key: novelDetailsKey,

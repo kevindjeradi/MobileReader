@@ -93,9 +93,9 @@ class _HomeState extends State<Home> {
               },
             ),
           )
-        : const SizedBox(
-            height: 200,
-            child: Center(child: Text("Votre historique est vide")));
+        : SizedBox(
+            height: MediaQuery.of(context).size.height * 0.2,
+            child: const Center(child: Text("Vous n'avez rien lu")));
 
     Widget librarySection = novels.isNotEmpty
         ? SizedBox(
@@ -108,92 +108,106 @@ class _HomeState extends State<Home> {
               },
             ),
           )
-        : const SizedBox(
-            height: 200,
-            child: Center(child: Text("Aucun novel dans votre bibliothèque")));
+        : SizedBox(
+            height: MediaQuery.of(context).size.height * 0.2,
+            child: const Center(
+                child: Text(
+                    "Vous n'avez ajouté aucun novel dans votre bibliothèque")));
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
       body: CustomScrollView(
         controller: _scrollController,
         slivers: <Widget>[
-          SliverAppBar(
-            backgroundColor: Theme.of(context).colorScheme.background,
-            expandedHeight: MediaQuery.of(context).size.height * 0.3,
-            floating: false,
-            pinned: true,
-            elevation: 0,
-            flexibleSpace: LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-                _isCollapsed = constraints.biggest.height <= kToolbarHeight;
-                return GestureDetector(
-                  onTap: () {
-                    if (historyNovels.isNotEmpty && !_isCollapsed) {
-                      novelDetailHandler.navigateToLastReadChapter(context);
-                    }
-                  },
-                  child: FlexibleSpaceBar(
-                    centerTitle: _isCollapsed ? false : true,
-                    titlePadding: _isCollapsed
-                        ? const EdgeInsets.all(0)
-                        : const EdgeInsets.only(bottom: 16.0),
-                    background: lastReadNovelCoverUrl != null
-                        ? Stack(fit: StackFit.expand, children: [
-                            ImageFiltered(
-                              imageFilter: ImageFilter.blur(
-                                sigmaX: 5,
-                                sigmaY: 5,
-                              ),
-                              child: Image.network(
-                                lastReadNovelCoverUrl,
-                                fit: BoxFit.cover,
+          historyNovels.isEmpty
+              ? SliverAppBar(
+                  backgroundColor: Theme.of(context).colorScheme.background,
+                  pinned: true,
+                  elevation: 0,
+                  title: const Text('Accueil'),
+                )
+              : SliverAppBar(
+                  backgroundColor: Theme.of(context).colorScheme.background,
+                  expandedHeight: MediaQuery.of(context).size.height * 0.3,
+                  floating: false,
+                  pinned: true,
+                  elevation: 0,
+                  flexibleSpace: LayoutBuilder(
+                    builder:
+                        (BuildContext context, BoxConstraints constraints) {
+                      _isCollapsed =
+                          constraints.biggest.height <= kToolbarHeight;
+                      return GestureDetector(
+                        onTap: () {
+                          if (historyNovels.isNotEmpty && !_isCollapsed) {
+                            novelDetailHandler
+                                .navigateToLastReadChapter(context);
+                          }
+                        },
+                        child: FlexibleSpaceBar(
+                          centerTitle: _isCollapsed ? false : true,
+                          titlePadding: _isCollapsed
+                              ? const EdgeInsets.all(0)
+                              : const EdgeInsets.only(bottom: 16.0),
+                          background: lastReadNovelCoverUrl != null
+                              ? Stack(fit: StackFit.expand, children: [
+                                  ImageFiltered(
+                                    imageFilter: ImageFilter.blur(
+                                      sigmaX: 5,
+                                      sigmaY: 5,
+                                    ),
+                                    child: Image.network(
+                                      lastReadNovelCoverUrl,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Image.network(
+                                      lastReadNovelCoverUrl,
+                                      fit: BoxFit.contain,
+                                    ),
+                                  ),
+                                ])
+                              : null,
+                          title: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: Align(
+                              alignment: _isCollapsed
+                                  ? Alignment.centerLeft
+                                  : Alignment.bottomCenter,
+                              child: Text(
+                                _isCollapsed
+                                    ? 'Accueil'
+                                    : 'Reprendre votre dernière lecture',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: _isCollapsed
+                                    ? TextAlign.left
+                                    : TextAlign.center,
+                                style: _isCollapsed
+                                    ? Theme.of(context).textTheme.titleLarge
+                                    : TextStyle(
+                                        fontSize: 16,
+                                        color: _isCollapsed
+                                            ? Colors.black
+                                            : Colors.white,
+                                        shadows: const <Shadow>[
+                                            Shadow(
+                                              offset: Offset(0.0, 2.0),
+                                              blurRadius: 5.0,
+                                              color: Colors.black,
+                                            ),
+                                          ]),
                               ),
                             ),
-                            Align(
-                              alignment: Alignment.center,
-                              child: Image.network(
-                                lastReadNovelCoverUrl,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ])
-                        : null,
-                    title: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Align(
-                        alignment: _isCollapsed
-                            ? Alignment.centerLeft
-                            : Alignment.bottomCenter,
-                        child: Text(
-                          _isCollapsed
-                              ? 'Accueil'
-                              : 'Reprendre votre dernière lecture',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign:
-                              _isCollapsed ? TextAlign.left : TextAlign.center,
-                          style: _isCollapsed
-                              ? Theme.of(context).textTheme.titleLarge
-                              : TextStyle(
-                                  fontSize: 16,
-                                  color: _isCollapsed
-                                      ? Colors.black
-                                      : Colors.white,
-                                  shadows: const <Shadow>[
-                                      Shadow(
-                                        offset: Offset(0.0, 2.0),
-                                        blurRadius: 5.0,
-                                        color: Colors.black,
-                                      ),
-                                    ]),
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
-          ),
+                ),
           SliverList(
             delegate: SliverChildListDelegate(
               [

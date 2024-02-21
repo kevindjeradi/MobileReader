@@ -97,8 +97,9 @@ class NovelDetailHandler {
       if (context.mounted) {
         await downloadChapterContent(nextChapter.link, nextChapter.title);
         final content = prefs.getString(nextChapter.title);
+        isDownloaded = await isChapterDownloaded(nextChapter.title);
 
-        if (context.mounted) {
+        if (context.mounted && isDownloaded) {
           Navigator.of(context).pushReplacement(MaterialPageRoute(
             builder: (context) => ChapterView(
               novelTitle: novel.novelTitle,
@@ -110,6 +111,11 @@ class NovelDetailHandler {
                   handlePreviousChapter(currentChapterIndex - 1),
             ),
           ));
+        } else {
+          if (context.mounted) {
+            showCustomSnackBar(context,
+                "Le chapitre n'a pas pu être téléchargé", SnackBarType.error);
+          }
         }
       }
     } else {
@@ -143,22 +149,24 @@ class NovelDetailHandler {
       ),
     );
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ChapterView(
-          novelTitle: novel.novelTitle,
-          chapterIndex: novel.lastReadChapter,
-          chapterTitle: novel.chaptersDetails[novel.lastReadChapter].title,
-          chapterContent: content!,
-          onPreviousChapter: () {
-            handlePreviousChapter(novel.lastReadChapter - 1);
-          },
-          onNextChapter: () {
-            handleNextChapter(novel.lastReadChapter + 1);
-          },
+    if (content != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ChapterView(
+            novelTitle: novel.novelTitle,
+            chapterIndex: novel.lastReadChapter,
+            chapterTitle: novel.chaptersDetails[novel.lastReadChapter].title,
+            chapterContent: content,
+            onPreviousChapter: () {
+              handlePreviousChapter(novel.lastReadChapter - 1);
+            },
+            onNextChapter: () {
+              handleNextChapter(novel.lastReadChapter + 1);
+            },
+          ),
         ),
-      ),
-    );
+      );
+    }
   }
 }
