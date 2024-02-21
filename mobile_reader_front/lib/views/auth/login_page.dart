@@ -1,16 +1,9 @@
 // login_page.dart
 import 'package:flutter/material.dart';
+import 'package:mobile_reader_front/components/auth/login_form.dart';
 import 'package:mobile_reader_front/components/generics/custom_loader.dart';
-import 'package:mobile_reader_front/components/generics/custom_navigation.dart';
-import 'package:mobile_reader_front/components/generics/custom_snackbar.dart';
-import 'package:mobile_reader_front/provider/theme_color_scheme_provider.dart';
-import 'package:mobile_reader_front/provider/user_provider.dart';
-import 'package:mobile_reader_front/services/api.dart';
-import 'package:mobile_reader_front/services/token_service.dart';
-import 'package:mobile_reader_front/services/user_service.dart';
+import 'package:mobile_reader_front/handlers/auth_handler.dart';
 import 'package:mobile_reader_front/views/auth/register_page.dart';
-import 'package:mobile_reader_front/views/navigation_screen.dart';
-import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -20,87 +13,26 @@ class LoginPage extends StatefulWidget {
 }
 
 class LoginPageState extends State<LoginPage> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final FocusNode _usernameFocus = FocusNode();
-  final FocusNode _passwordFocus = FocusNode();
-  bool _passwordVisible = false;
-  bool showError = false;
   bool _loading = false;
-  final validationNotifier = ValueNotifier<bool>(false);
-  final _userService = UserService();
-
-  void _validateFields() {
-    setState(() {
-      showError = _passwordController.text.isEmpty ||
-          _usernameController.text.isEmpty ||
-          _passwordController.text.length < 4 ||
-          _usernameController.text.length < 4;
-    });
-
-    validationNotifier.value = _usernameController.text.isNotEmpty &&
-        _usernameController.text.length >= 4 &&
-        _passwordController.text.isNotEmpty &&
-        _passwordController.text.length >= 4;
-  }
+  late AuthHandler _authHandler;
 
   @override
   void initState() {
     super.initState();
-    _usernameController.addListener(_validateFields);
-    _passwordController.addListener(_validateFields);
+    _authHandler = AuthHandler(context: context);
   }
 
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _passwordController.dispose();
-    _usernameFocus.dispose();
-    _passwordFocus.dispose();
-    validationNotifier.dispose();
-    super.dispose();
-  }
-
-  Future<void> _login() async {
-    if (_passwordController.text.isEmpty) {
-      setState(() {
-        showError = true;
-      });
-      return;
-    }
-    try {
+  Future<void> _login(String username, String password) async {
+    setState(() {
       _loading = true;
-      final response = await _userService.login(
-          _usernameController.text, _passwordController.text);
-      _loading = false;
-      if (response.containsKey('token')) {
-        // saving token
-        await TokenService().saveToken(response['token']);
-        if (mounted) {
-          // Fetch user details
-          final userProvider =
-              Provider.of<UserProvider>(context, listen: false);
-          final themeProvider =
-              Provider.of<ThemeColorSchemeProvider>(context, listen: false);
-          await Api.populateUserProvider(userProvider);
-          themeProvider.setThemeByName(userProvider.theme);
-        }
-        if (mounted) {
-          CustomNavigation.pushReplacement(context, const NavigationScreen());
-          showCustomSnackBar(
-              context, 'Connecté avec succès', SnackBarType.success);
-        }
-      } else {
-        if (mounted) {
-          showCustomSnackBar(
-              context, 'Impossible de se connecter', SnackBarType.error);
-        }
-      }
-    } catch (error) {
-      if (mounted) {
-        showCustomSnackBar(
-            context, 'Une erreur est survenue -> $error', SnackBarType.error);
-      }
+    });
+
+    await _authHandler.login(username, password);
+
+    if (mounted) {
+      setState(() {
+        _loading = false;
+      });
     }
   }
 
@@ -126,69 +58,9 @@ class LoginPageState extends State<LoginPage> {
                         style: Theme.of(context).textTheme.displayLarge,
                       ),
                       const SizedBox(height: 32),
-                      TextField(
-                        controller: _usernameController,
-                        focusNode: _usernameFocus,
-                        onSubmitted: (_) => _passwordFocus.requestFocus(),
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.person),
-                          prefixIconColor: theme.colorScheme.onBackground,
-                          labelText: 'Pseudo',
-                          labelStyle:
-                              TextStyle(color: theme.colorScheme.onBackground),
-                          errorText: showError &&
-                                  _usernameController.text.length < 4 &&
-                                  _usernameController.text.isNotEmpty
-                              ? 'Le pseudo doit faire au moins 4 lettres'
-                              : null,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      TextField(
-                        controller: _passwordController,
-                        focusNode: _passwordFocus,
-                        onSubmitted: (_) {
-                          if (validationNotifier.value) {
-                            _login();
-                          }
-                        },
-                        obscureText: !_passwordVisible,
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          prefixIcon: const Icon(Icons.lock),
-                          suffixIconColor: theme.colorScheme.onBackground,
-                          prefixIconColor: theme.colorScheme.onBackground,
-                          labelText: 'Mot de passe',
-                          labelStyle:
-                              TextStyle(color: theme.colorScheme.onBackground),
-                          errorText: showError &&
-                                  _passwordController.text.length < 4 &&
-                                  _passwordController.text.isNotEmpty
-                              ? 'Le mot de passe doit faire au moins 4 lettres'
-                              : null,
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _passwordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _passwordVisible = !_passwordVisible;
-                              });
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      ValueListenableBuilder<bool>(
-                        valueListenable: validationNotifier,
-                        builder: (context, isValid, child) {
-                          return ElevatedButton(
-                            onPressed: isValid ? () => _login() : null,
-                            child: const Text('Se connecter'),
-                          );
-                        },
+                      LoginForm(
+                        onLogin: (username, password) =>
+                            _login(username, password),
                       ),
                       const SizedBox(height: 16),
                       TextButton(
