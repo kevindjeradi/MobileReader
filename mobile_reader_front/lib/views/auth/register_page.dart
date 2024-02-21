@@ -1,17 +1,9 @@
 // register_page.dart
 import 'package:flutter/material.dart';
+import 'package:mobile_reader_front/components/auth/register_form.dart';
 import 'package:mobile_reader_front/components/generics/custom_loader.dart';
-import 'package:mobile_reader_front/components/generics/custom_navigation.dart';
-import 'package:mobile_reader_front/components/generics/custom_snackbar.dart';
-import 'package:mobile_reader_front/helpers/logger.dart';
-import 'package:mobile_reader_front/provider/auth_provider.dart';
-import 'package:mobile_reader_front/provider/user_provider.dart';
-import 'package:mobile_reader_front/services/api.dart';
-import 'package:mobile_reader_front/services/token_service.dart';
-import 'package:mobile_reader_front/services/user_service.dart';
+import 'package:mobile_reader_front/handlers/auth_handler.dart';
 import 'package:mobile_reader_front/views/auth/login_page.dart';
-import 'package:mobile_reader_front/views/navigation_screen.dart';
-import 'package:provider/provider.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -21,111 +13,25 @@ class RegisterPage extends StatefulWidget {
 }
 
 class RegisterPageState extends State<RegisterPage> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final FocusNode _usernameFocus = FocusNode();
-  final FocusNode _passwordFocus = FocusNode();
-  bool _passwordVisible = false;
-  bool showError = false;
   bool _loading = false;
-  final validationNotifier = ValueNotifier<bool>(false);
-  final _userService = UserService();
-
-  void _validateFields() {
-    setState(() {
-      showError = _passwordController.text.isEmpty ||
-          _usernameController.text.isEmpty ||
-          _passwordController.text.length < 4 ||
-          _usernameController.text.length < 4;
-    });
-
-    validationNotifier.value = _usernameController.text.isNotEmpty &&
-        _usernameController.text.length >= 4 &&
-        _passwordController.text.isNotEmpty &&
-        _passwordController.text.length >= 4;
-  }
+  late AuthHandler _authHandler;
 
   @override
   void initState() {
     super.initState();
-    _usernameController.addListener(_validateFields);
-    _passwordController.addListener(_validateFields);
+    _authHandler = AuthHandler(context: context);
   }
 
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _passwordController.dispose();
-    _usernameFocus.dispose();
-    _passwordFocus.dispose();
-    validationNotifier.dispose();
-    super.dispose();
-  }
-
-  Future<void> _register() async {
-    if (_passwordController.text.isEmpty) {
-      setState(() {
-        showError = true;
-      });
-      return;
-    }
-    try {
+  Future<void> _register(String username, String password) async {
+    setState(() {
       _loading = true;
-      final response = await _userService.signup(
-          _usernameController.text, _passwordController.text);
-      if (response.containsKey('token')) {
-        // Save the token first
-        await TokenService().saveToken(response['token']);
+    });
 
-        if (mounted) {
-          // Then populate the user provider
-          final userProvider =
-              Provider.of<UserProvider>(context, listen: false);
-          await Api.populateUserProvider(userProvider);
-          if (mounted) {
-            // Log the user in
-            final bool isLoggedIn =
-                await Provider.of<AuthProvider>(context, listen: false)
-                    .login(_usernameController.text, _passwordController.text);
-            if (mounted) {
-              // Make sure the user is logged in before navigating
-              if (isLoggedIn) {
-                showCustomSnackBar(
-                    context,
-                    'Inscription et connexion réussies !',
-                    SnackBarType.success);
-                CustomNavigation.pushReplacement(
-                    context, const NavigationScreen());
-              } else {
-                showCustomSnackBar(
-                    context,
-                    'Inscription réussie mais erreur de connexion',
-                    SnackBarType.error);
-              }
-            }
-          } else {
-            // Handle registration failure
-            Log.logger.e("An error occurred in register: ${response['error']}");
-            if (mounted) {
-              showCustomSnackBar(
-                  context,
-                  "Une erreur est survenue: ${response['error']}",
-                  SnackBarType.error);
-            }
-          }
-        }
-      }
-    } catch (e) {
-      // Handle registration error
-      Log.logger.e("An error occurred in register: $e");
-      if (mounted) {
-        showCustomSnackBar(
-            context, "Une erreur est survenue: $e", SnackBarType.error);
-      }
-    } finally {
+    await _authHandler.register(username, password);
+
+    setState(() {
       _loading = false;
-      if (mounted) setState(() {});
-    }
+    });
   }
 
   @override
@@ -147,68 +53,9 @@ class RegisterPageState extends State<RegisterPage> {
                     Text("S'inscrire",
                         style: Theme.of(context).textTheme.displayLarge),
                     const SizedBox(height: 32),
-                    TextField(
-                      controller: _usernameController,
-                      focusNode: _usernameFocus,
-                      onSubmitted: (_) => _passwordFocus.requestFocus(),
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.person),
-                        prefixIconColor: theme.colorScheme.onBackground,
-                        labelText: 'Pseudo',
-                        labelStyle:
-                            TextStyle(color: theme.colorScheme.onBackground),
-                        errorText: showError &&
-                                _usernameController.text.length < 4 &&
-                                _usernameController.text.isNotEmpty
-                            ? 'Le pseudo doit faire au moins 4 lettres'
-                            : null,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextField(
-                      controller: _passwordController,
-                      focusNode: _passwordFocus,
-                      onSubmitted: (_) {
-                        if (validationNotifier.value) {
-                          _register();
-                        }
-                      },
-                      obscureText: !_passwordVisible,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.lock),
-                        suffixIconColor: theme.colorScheme.onBackground,
-                        prefixIconColor: theme.colorScheme.onBackground,
-                        labelText: 'Mot de passe',
-                        labelStyle:
-                            TextStyle(color: theme.colorScheme.onBackground),
-                        errorText: showError &&
-                                _passwordController.text.length < 4 &&
-                                _passwordController.text.isNotEmpty
-                            ? 'Le mot de passe doit faire au moins 4 lettres'
-                            : null,
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            _passwordVisible
-                                ? Icons.visibility
-                                : Icons.visibility_off,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _passwordVisible = !_passwordVisible;
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-                    ValueListenableBuilder<bool>(
-                      valueListenable: validationNotifier,
-                      builder: (context, isValid, child) {
-                        return ElevatedButton(
-                          onPressed: isValid ? _register : null,
-                          child: const Text("S'inscrire"),
-                        );
-                      },
+                    RegisterForm(
+                      onRegister: (username, password) =>
+                          _register(username, password),
                     ),
                     const SizedBox(height: 16),
                     TextButton(
