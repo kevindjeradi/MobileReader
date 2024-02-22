@@ -43,8 +43,6 @@ class AuthCheckState extends State<AuthCheck> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return FutureBuilder<void>(
       future: _checkAuth,
       builder: (context, snapshot) {
@@ -76,18 +74,12 @@ class AuthCheckState extends State<AuthCheck> {
           }
         } else if (_showRetry) {
           return Scaffold(
-            backgroundColor: theme.colorScheme.background,
             body: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   const Text("Problème de connexion"),
                   ElevatedButton(
-                    style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.resolveWith(
-                            (states) => theme.colorScheme.surface),
-                        foregroundColor: MaterialStateProperty.resolveWith(
-                            (states) => theme.colorScheme.onBackground)),
                     onPressed: () {
                       _initializeAuthCheck();
                     },
@@ -99,9 +91,7 @@ class AuthCheckState extends State<AuthCheck> {
           );
         } else {
           // If the future is not done and the retry indicator is false, show loader
-          return Scaffold(
-              backgroundColor: theme.colorScheme.background,
-              body: const CustomLoader());
+          return const Scaffold(body: CustomLoader());
         }
       },
     );
