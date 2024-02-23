@@ -1,4 +1,4 @@
-// types/chapter.interface.ts
+// types/novelDetails.interface.ts
 import { Chapter } from "./chapter.interface";
 
 export interface NovelDetails {
