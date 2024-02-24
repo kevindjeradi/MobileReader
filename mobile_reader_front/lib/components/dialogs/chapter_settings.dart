@@ -105,8 +105,8 @@ class ChapterSettingsState extends State<ChapterSettings> {
                 ],
               ),
               Slider(
-                min: 1.0,
-                max: 100.0,
+                min: 10.0,
+                max: 200.0,
                 value: _autoScrollSpeed,
                 onChanged: (double value) {
                   setState(() => _autoScrollSpeed = value);
