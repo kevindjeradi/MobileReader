@@ -19,11 +19,18 @@ class AuthCheck extends StatefulWidget {
 class AuthCheckState extends State<AuthCheck> {
   late Future<void> _checkAuth;
   bool _showRetry = false;
+  Timer? _authTimer;
 
   @override
   void initState() {
     super.initState();
     _initializeAuthCheck();
+  }
+
+  @override
+  void dispose() {
+    _authTimer?.cancel();
+    super.dispose();
   }
 
   void _initializeAuthCheck() {
@@ -32,12 +39,18 @@ class AuthCheckState extends State<AuthCheck> {
     setState(() {
       _showRetry = false;
     });
-    Timer(const Duration(seconds: 5), () {
+    _authTimer = Timer(const Duration(seconds: 5), () {
       if (mounted && !_showRetry) {
         setState(() {
           _showRetry = true;
         });
       }
+    });
+
+    _checkAuth.then((_) {
+      _authTimer?.cancel();
+    }).catchError((error) {
+      _authTimer?.cancel();
     });
   }
 
