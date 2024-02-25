@@ -27,6 +27,7 @@ class AddNovelState extends State<AddNovel> {
   bool _isPageLoading = false;
   bool _isNovelLoading = false;
   bool _isSearching = false;
+  bool _gettingCompletedNovels = false;
   Map<String, dynamic>? novelDetails;
 
   @override
@@ -59,11 +60,37 @@ class AddNovelState extends State<AddNovel> {
   Future<void> _performSearch(String query) async {
     setState(() {
       _isSearching = true; // Start searching
+      if (_gettingCompletedNovels) _gettingCompletedNovels = false;
     });
     try {
       final results = await NovelService.searchNovels(query);
       if (mounted) {
         setState(() {
+          _searchResults = results;
+          _isSearching = false; // Search completed
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isSearching = false; // Search failed
+        });
+        showCustomSnackBar(
+            context, "Failed to search novels", SnackBarType.error);
+      }
+    }
+  }
+
+  Future<void> _fetchCompletedNovels() async {
+    setState(() {
+      _isSearching = true; // Start searching
+      if (!_gettingCompletedNovels) _gettingCompletedNovels = true;
+    });
+    try {
+      final results = await NovelService.searchCompletedNovels();
+      if (mounted) {
+        setState(() {
+          _searchResults = [];
           _searchResults = results;
           _isSearching = false; // Search completed
         });
@@ -113,7 +140,7 @@ class AddNovelState extends State<AddNovel> {
   }
 
   Widget _buildSearchResults() {
-    if (_searchResults.isEmpty) {
+    if (_searchResults.isEmpty && !_gettingCompletedNovels) {
       return _searchController.text.length < 3
           ? const SizedBox()
           : const Text('Aucun résultat trouvé');
@@ -126,7 +153,15 @@ class AddNovelState extends State<AddNovel> {
         final novel = _searchResults[index];
         return ListTile(
           title: Text(novel['title']),
-          leading: Image.network(novel['imageUrl'], width: 50, height: 50),
+          leading: Image.network(
+            novel['imageUrl'],
+            width: 50,
+            height: 50,
+            fit: BoxFit.contain,
+          ),
+          trailing: _gettingCompletedNovels
+              ? Text(novel['chapterCount'].toString())
+              : null,
           onTap: () => _fetchNovelDetails(novel['novelUrl']),
         );
       },
@@ -186,9 +221,11 @@ class AddNovelState extends State<AddNovel> {
 
     return Scaffold(
       appBar: AppBar(
+        centerTitle: false,
         title: const Text('Ajouter un novel'),
         elevation: 0,
         backgroundColor: theme.colorScheme.background,
+        foregroundColor: theme.colorScheme.onBackground,
       ),
       backgroundColor: theme.colorScheme.background,
       body: _isPageLoading
@@ -210,6 +247,12 @@ class AddNovelState extends State<AddNovel> {
                         suffixIconColor: theme.colorScheme.onBackground,
                       ),
                     ),
+                    const SizedBox(height: 20),
+                    const Center(child: Text("ou")),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                        onPressed: () => _fetchCompletedNovels(),
+                        child: const Text("Chercher les novels termminés")),
                     const SizedBox(height: 20),
                     if (_isPageLoading || _isSearching)
                       const Padding(
