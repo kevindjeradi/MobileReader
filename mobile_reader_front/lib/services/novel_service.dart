@@ -46,6 +46,17 @@ class NovelService {
     }
   }
 
+  static Future<List<dynamic>> searchCompletedNovels() async {
+    final response = await Api().get('$baseUrl/api/completed-novels');
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      return data;
+    } else {
+      throw Exception('Failed to load chapter content');
+    }
+  }
+
   static Future<Map<String, dynamic>> fetchChapters(String novelUrl) async {
     final response =
         await Api().get('$baseUrl/api/chapters?novelUrl=$novelUrl');
