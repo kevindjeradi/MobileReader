@@ -232,111 +232,108 @@ class ChapterViewState extends State<ChapterView> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: theme.colorScheme.background,
-        body: Stack(children: [
-          CustomScrollView(
-            controller: _scrollController,
-            slivers: <Widget>[
-              SliverAppBar(
-                backgroundColor: theme.colorScheme.background,
-                foregroundColor: theme.colorScheme.onBackground,
-                pinned: _isAppBarVisible,
-                floating: true,
-                leading: IconButton(
-                  splashColor: Colors.transparent,
-                  highlightColor: Colors.transparent,
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: Icon(
-                    Icons.arrow_back_ios,
-                    color: theme.colorScheme.onBackground,
-                  ),
-                ),
-                title: Text(widget.chapterTitle),
-                centerTitle: true,
-                elevation: 0,
-              ),
-              SliverToBoxAdapter(
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onTap: () {
-                    setState(() {
-                      _isAppBarVisible = !_isAppBarVisible;
-                    });
-                  },
-                  onDoubleTap: () => _showSettingsDialog(context),
-                  child: Html(
-                    data: preprocessChapterContent(widget.chapterContent),
-                    style: {
-                      "p": Style(
-                        fontSize: FontSize(_fontSize),
-                        color: theme.colorScheme.onBackground,
-                      ),
-                    },
-                  ),
+    return Scaffold(
+      backgroundColor: theme.colorScheme.background,
+      body: Stack(children: [
+        CustomScrollView(
+          controller: _scrollController,
+          slivers: <Widget>[
+            SliverAppBar(
+              backgroundColor: theme.colorScheme.background,
+              foregroundColor: theme.colorScheme.onBackground,
+              pinned: _isAppBarVisible,
+              floating: true,
+              leading: IconButton(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.arrow_back_ios,
+                  color: theme.colorScheme.onBackground,
                 ),
               ),
-            ],
-          ),
-          Positioned(
-              left: 0,
-              right: 0,
-              bottom: 28,
-              child: AnimatedSlide(
-                duration: const Duration(milliseconds: 500),
-                offset: _isAppBarVisible ? Offset.zero : const Offset(0, 3),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                          color: theme.colorScheme.surface,
-                          shape: BoxShape.circle),
-                      child: IconButton(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onPressed: widget.onPreviousChapter,
-                          icon: const Icon(
-                            Icons.navigate_before,
-                            size: 32,
-                          )),
+              title: Text(widget.chapterTitle),
+              centerTitle: true,
+              elevation: 0,
+            ),
+            SliverToBoxAdapter(
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () {
+                  setState(() {
+                    _isAppBarVisible = !_isAppBarVisible;
+                  });
+                },
+                onDoubleTap: () => _showSettingsDialog(context),
+                child: Html(
+                  data: preprocessChapterContent(widget.chapterContent),
+                  style: {
+                    "p": Style(
+                      fontSize: FontSize(_fontSize),
+                      color: theme.colorScheme.onBackground,
                     ),
-                    const SizedBox(width: 32),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: theme.colorScheme.surface,
-                          shape: BoxShape.circle),
-                      child: IconButton(
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+        Positioned(
+            left: 0,
+            right: 0,
+            bottom: 28,
+            child: AnimatedSlide(
+              duration: const Duration(milliseconds: 500),
+              offset: _isAppBarVisible ? Offset.zero : const Offset(0, 3),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                        color: theme.colorScheme.surface,
+                        shape: BoxShape.circle),
+                    child: IconButton(
                         splashColor: Colors.transparent,
                         highlightColor: Colors.transparent,
-                        icon: Icon(_autoScrollActive
-                            ? Icons.pause
-                            : Icons.fast_forward),
-                        onPressed: _toggleAutoScroll,
-                      ),
+                        onPressed: widget.onPreviousChapter,
+                        icon: const Icon(
+                          Icons.navigate_before,
+                          size: 32,
+                        )),
+                  ),
+                  const SizedBox(width: 32),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: theme.colorScheme.surface,
+                        shape: BoxShape.circle),
+                    child: IconButton(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      icon: Icon(
+                          _autoScrollActive ? Icons.pause : Icons.fast_forward),
+                      onPressed: _toggleAutoScroll,
                     ),
-                    const SizedBox(width: 32),
-                    Container(
-                      decoration: BoxDecoration(
-                          color: theme.colorScheme.surface,
-                          shape: BoxShape.circle),
-                      child: IconButton(
-                          splashColor: Colors.transparent,
-                          highlightColor: Colors.transparent,
-                          onPressed: widget.onNextChapter,
-                          icon: const Icon(
-                            Icons.navigate_next,
-                            size: 32,
-                          )),
-                    ),
-                  ],
-                ),
-              )),
-        ]),
-      ),
+                  ),
+                  const SizedBox(width: 32),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: theme.colorScheme.surface,
+                        shape: BoxShape.circle),
+                    child: IconButton(
+                        splashColor: Colors.transparent,
+                        highlightColor: Colors.transparent,
+                        onPressed: widget.onNextChapter,
+                        icon: const Icon(
+                          Icons.navigate_next,
+                          size: 32,
+                        )),
+                  ),
+                ],
+              ),
+            )),
+      ]),
     );
   }
 }
