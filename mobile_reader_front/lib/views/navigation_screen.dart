@@ -31,10 +31,8 @@ class NavigationScreenState extends State<NavigationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
-      body: SafeArea(
-        child: Center(
-          child: _widgetOptions.elementAt(_selectedIndex),
-        ),
+      body: Center(
+        child: _widgetOptions.elementAt(_selectedIndex),
       ),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
