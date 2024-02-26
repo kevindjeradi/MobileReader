@@ -93,155 +93,149 @@ class _NovelDetailState extends State<NovelDetail> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: Theme.of(context).colorScheme.background,
-        body: FutureBuilder<SharedPreferences>(
-            future: SharedPreferences.getInstance(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData) {
-                prefs = snapshot.data!;
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: FutureBuilder<SharedPreferences>(
+          future: SharedPreferences.getInstance(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData) {
+              prefs = snapshot.data!;
 
-                return CustomScrollView(
-                  slivers: <Widget>[
-                    NovelDetailSliverAppBar(novel: widget.novel),
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Text(
-                              widget.novel.author,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 18,
-                                color: theme.colorScheme.primary,
-                              ),
+              return CustomScrollView(
+                slivers: <Widget>[
+                  NovelDetailSliverAppBar(novel: widget.novel),
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            widget.novel.author,
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 18,
+                              color: theme.colorScheme.primary,
                             ),
-                            const SizedBox(height: 8),
-                            ExpandableText(
-                              text: widget.novel.description,
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: theme.colorScheme.onBackground,
-                              ),
+                          ),
+                          const SizedBox(height: 8),
+                          ExpandableText(
+                            text: widget.novel.description,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: theme.colorScheme.onBackground,
                             ),
-                            const Divider(thickness: 1),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: Center(
-                        child: ElevatedButton(
-                          style: ButtonStyle(
-                              backgroundColor:
-                                  MaterialStateProperty.resolveWith(
-                                      (states) => theme.colorScheme.surface),
-                              foregroundColor:
-                                  MaterialStateProperty.resolveWith((states) =>
-                                      theme.colorScheme.onBackground)),
-                          onPressed: isLoading ? null : _downloadUnreadChapters,
-                          child: const Text(
-                              'Télécharger les chapitres de cette page'),
-                        ),
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back),
-                            onPressed: currentPage > 0
-                                ? () {
-                                    setState(() {
-                                      currentPage--;
-                                    });
-                                  }
-                                : null,
                           ),
-                          Text('Page ${currentPage + 1} sur $totalPages'),
-                          IconButton(
-                            icon: const Icon(Icons.arrow_forward),
-                            onPressed: currentPage < totalPages - 1
-                                ? () {
-                                    setState(() {
-                                      currentPage++;
-                                    });
-                                  }
-                                : null,
-                          ),
+                          const Divider(thickness: 1),
                         ],
                       ),
                     ),
-                    SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (BuildContext context, int index) {
-                          // Calculate the actual index of the chapter in the novel's list of chapters
-                          int actualIndex =
-                              currentPage * chaptersPerPage + index;
-                          if (actualIndex < widget.novel.numberOfChapters) {
-                            ChaptersDetails chapterDetail =
-                                widget.novel.chaptersDetails[actualIndex];
-                            return ChapterTile(
-                              chapterDetail: chapterDetail,
-                              chapterIndex: actualIndex,
-                              prefs: prefs,
-                              novelTitle: widget.novel.novelTitle,
-                              onNextChapter:
-                                  novelDetailHandler.handleNextChapter,
-                              onPreviousChapter:
-                                  novelDetailHandler.handlePreviousChapter,
-                              chaptersRead: widget.novel.chaptersRead,
-                            );
-                          } else {
-                            return null;
-                          }
-                        },
-                        childCount: min(
-                            chaptersPerPage,
-                            widget.novel.numberOfChapters -
-                                currentPage * chaptersPerPage),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Center(
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.resolveWith(
+                                (states) => theme.colorScheme.surface),
+                            foregroundColor: MaterialStateProperty.resolveWith(
+                                (states) => theme.colorScheme.onBackground)),
+                        onPressed: isLoading ? null : _downloadUnreadChapters,
+                        child: const Text(
+                            'Télécharger les chapitres de cette page'),
                       ),
                     ),
-                    SliverToBoxAdapter(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.arrow_back),
-                            onPressed: currentPage > 0
-                                ? () {
-                                    setState(() {
-                                      currentPage--;
-                                    });
-                                  }
-                                : null,
-                          ),
-                          Text('Page ${currentPage + 1} sur $totalPages'),
-                          IconButton(
-                            icon: const Icon(Icons.arrow_forward),
-                            onPressed: currentPage < totalPages - 1
-                                ? () {
-                                    setState(() {
-                                      currentPage++;
-                                    });
-                                  }
-                                : null,
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                );
-              } else {
-                return const CustomLoader();
-              }
-            }),
-      ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.arrow_back),
+                          onPressed: currentPage > 0
+                              ? () {
+                                  setState(() {
+                                    currentPage--;
+                                  });
+                                }
+                              : null,
+                        ),
+                        Text('Page ${currentPage + 1} sur $totalPages'),
+                        IconButton(
+                          icon: const Icon(Icons.arrow_forward),
+                          onPressed: currentPage < totalPages - 1
+                              ? () {
+                                  setState(() {
+                                    currentPage++;
+                                  });
+                                }
+                              : null,
+                        ),
+                      ],
+                    ),
+                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (BuildContext context, int index) {
+                        // Calculate the actual index of the chapter in the novel's list of chapters
+                        int actualIndex = currentPage * chaptersPerPage + index;
+                        if (actualIndex < widget.novel.numberOfChapters) {
+                          ChaptersDetails chapterDetail =
+                              widget.novel.chaptersDetails[actualIndex];
+                          return ChapterTile(
+                            chapterDetail: chapterDetail,
+                            chapterIndex: actualIndex,
+                            prefs: prefs,
+                            novelTitle: widget.novel.novelTitle,
+                            onNextChapter: novelDetailHandler.handleNextChapter,
+                            onPreviousChapter:
+                                novelDetailHandler.handlePreviousChapter,
+                            chaptersRead: widget.novel.chaptersRead,
+                          );
+                        } else {
+                          return null;
+                        }
+                      },
+                      childCount: min(
+                          chaptersPerPage,
+                          widget.novel.numberOfChapters -
+                              currentPage * chaptersPerPage),
+                    ),
+                  ),
+                  SliverToBoxAdapter(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.arrow_back),
+                          onPressed: currentPage > 0
+                              ? () {
+                                  setState(() {
+                                    currentPage--;
+                                  });
+                                }
+                              : null,
+                        ),
+                        Text('Page ${currentPage + 1} sur $totalPages'),
+                        IconButton(
+                          icon: const Icon(Icons.arrow_forward),
+                          onPressed: currentPage < totalPages - 1
+                              ? () {
+                                  setState(() {
+                                    currentPage++;
+                                  });
+                                }
+                              : null,
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              );
+            } else {
+              return const CustomLoader();
+            }
+          }),
     );
   }
 }
