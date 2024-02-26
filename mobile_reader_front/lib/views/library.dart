@@ -60,6 +60,7 @@ class Library extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
         foregroundColor: theme.colorScheme.onBackground,
+        centerTitle: false,
         title: const Text('Bibliothèque'),
       ),
       body: Column(
