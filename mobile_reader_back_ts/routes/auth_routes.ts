@@ -14,14 +14,18 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 
 router.post('/signup', async (req: Request, res: Response) => {
     try {
-        const { username, password } = req.body;
+        const { username, password, email } = req.body;
         
         const existingUser = await User.findOne({ username });
+        const existingEmail = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ error: 'Username already exists' });
         }
-        
-        const user = new User({ username, password });
+        if (existingEmail) {
+            return res.status(400).json({ error: 'Email already used' });
+        }
+
+        const user = new User({ username, email, password });
         await user.save();
 
         const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '1h' });
