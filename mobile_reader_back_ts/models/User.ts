@@ -19,6 +19,8 @@ const userSchema = new mongoose.Schema<IUser>({
         type: String,
         required: true
     },
+    resetPasswordCode: Number,
+    resetPasswordExpires: Date,
     uniqueIdentifier: {
         type: String,
         unique: true,
