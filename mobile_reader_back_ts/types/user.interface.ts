@@ -5,7 +5,10 @@ import { IHistory } from './history.interface';
 
 export interface IUser extends mongoose.Document {
     username: string;
+    email: string;
     password: string;
+    resetPasswordCode: Number | null;
+    resetPasswordExpires: Date | null;
     uniqueIdentifier: string;
     dateJoined: Date;
     profileImage: string;
