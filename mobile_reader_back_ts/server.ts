@@ -8,6 +8,7 @@ import authRoutes from './routes/auth_routes';
 import scraperRoutes from './routes/scraper_route';
 import novelRoutes from './routes/novel_routes';
 import chapterRoutes from './routes/chapter_routes';
+import { setupDailyTasks } from './scheduled_tasks/daily_tasks';
 
 declare global {
     namespace Express {
@@ -39,6 +40,8 @@ app.use('/', userRoutes);
 app.use('/', novelRoutes);
 app.use('/', chapterRoutes);
 app.use('/api', scraperRoutes);
+
+setupDailyTasks();
 
 app.listen(PORT, '0.0.0.0', function () {
     console.log(`Server is running on ${APP_URL}${PORT}`);
