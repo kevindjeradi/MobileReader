@@ -22,12 +22,12 @@ class RegisterPageState extends State<RegisterPage> {
     _authHandler = AuthHandler(context: context);
   }
 
-  Future<void> _register(String username, String password) async {
+  Future<void> _register(String username, String password, String email) async {
     setState(() {
       _loading = true;
     });
 
-    await _authHandler.register(username, password);
+    await _authHandler.register(username, password, email);
 
     setState(() {
       _loading = false;
@@ -54,8 +54,8 @@ class RegisterPageState extends State<RegisterPage> {
                         style: Theme.of(context).textTheme.displayLarge),
                     const SizedBox(height: 32),
                     RegisterForm(
-                      onRegister: (username, password) =>
-                          _register(username, password),
+                      onRegister: (username, password, email) =>
+                          _register(username, password, email),
                     ),
                     const SizedBox(height: 16),
                     TextButton(

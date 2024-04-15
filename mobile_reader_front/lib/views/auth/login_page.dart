@@ -4,6 +4,7 @@ import 'package:mobile_reader_front/components/auth/login_form.dart';
 import 'package:mobile_reader_front/components/generics/custom_loader.dart';
 import 'package:mobile_reader_front/handlers/auth_handler.dart';
 import 'package:mobile_reader_front/views/auth/register_page.dart';
+import 'package:mobile_reader_front/views/auth/reset_password_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -63,6 +64,19 @@ class LoginPageState extends State<LoginPage> {
                             _login(username, password),
                       ),
                       const SizedBox(height: 16),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const ResetPasswordPage()),
+                          );
+                        },
+                        child: Text("Mot de passe oublié",
+                            style: TextStyle(
+                                color: theme.colorScheme.onBackground)),
+                      ),
                       TextButton(
                         onPressed: () {
                           Navigator.pushReplacement(
