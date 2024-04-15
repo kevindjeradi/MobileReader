@@ -1,3 +1,4 @@
+// userRoutes.ts
 import express, { Request, Response } from 'express';
 import User from '../models/User'; // Adjust the import path as necessary
 import jwt from 'jsonwebtoken';

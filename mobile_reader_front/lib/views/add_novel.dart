@@ -2,6 +2,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:mobile_reader_front/components/add_novel/novel_details_widget.dart';
 import 'package:mobile_reader_front/components/generics/custom_loader.dart';
 import 'package:mobile_reader_front/components/generics/custom_snackbar.dart';
@@ -250,9 +251,17 @@ class AddNovelState extends State<AddNovel> {
                     const SizedBox(height: 20),
                     const Center(child: Text("ou")),
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                        onPressed: () => _fetchCompletedNovels(),
-                        child: const Text("Chercher les novels termminés")),
+                    InkWell(
+                      splashColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onTap: () => _fetchCompletedNovels(),
+                      child: SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.1,
+                        child: const Card(
+                            child: Center(
+                                child: Text("Chercher les novels terminés"))),
+                      ),
+                    ),
                     const SizedBox(height: 20),
                     if (_isPageLoading || _isSearching)
                       const Padding(

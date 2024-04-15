@@ -39,6 +39,7 @@ class _MyAppState extends State<MyApp> {
     final themeProvider = Provider.of<ThemeColorSchemeProvider>(context);
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'K Reader',
       theme: themeLight(themeProvider.colorScheme, themeProvider.textTheme),
       themeMode: ThemeMode.light,

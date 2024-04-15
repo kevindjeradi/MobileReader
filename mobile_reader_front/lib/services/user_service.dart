@@ -9,14 +9,16 @@ import 'package:mobile_reader_front/services/token_service.dart';
 class UserService {
   static final String baseUrl = dotenv.env['API_URL'] ?? 'http://10.0.2.2:3000';
 
-  Future<Map<String, dynamic>> signup(String username, String password) async {
+  Future<Map<String, dynamic>> signup(
+      String username, String password, String email) async {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/signup'),
         headers: {
           'Content-Type': 'application/json',
         },
-        body: json.encode({'username': username, 'password': password}),
+        body: json.encode(
+            {'username': username, 'password': password, 'email': email}),
       );
 
       return json.decode(response.body);
@@ -39,6 +41,54 @@ class UserService {
       return json.decode(response.body);
     } catch (e) {
       Log.logger.e("An error occurred on login: $e");
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> sendResetCode(String email) async {
+    try {
+      final response = await Api().post(
+        '$baseUrl/forgot-password',
+        {'email': email},
+      );
+
+      return json.decode(response.body);
+    } catch (e, s) {
+      Log.logger.e("An error occurred on resetPassword: $e\n Stack trace: $s");
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> verifyResetCode(
+      String email, String code) async {
+    try {
+      final response = await Api().post(
+        '$baseUrl/verify-reset-code',
+        {'email': email, 'code': code},
+      );
+
+      return json.decode(response.body);
+    } catch (e, s) {
+      Log.logger.e("An error occurred on resetPassword: $e\n Stack trace: $s");
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>> resetPassword(
+      String email, String code, String newPassword) async {
+    try {
+      final response = await Api().post(
+        '$baseUrl/reset-password',
+        {
+          'email': email,
+          'code': code,
+          'password': newPassword,
+        },
+      );
+
+      return json.decode(response.body);
+    } catch (e, s) {
+      Log.logger.e("An error occurred on resetPassword: $e\n Stack trace: $s");
       rethrow;
     }
   }

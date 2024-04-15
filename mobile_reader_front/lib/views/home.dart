@@ -135,8 +135,8 @@ class _HomeState extends State<Home> {
                   flexibleSpace: LayoutBuilder(
                     builder:
                         (BuildContext context, BoxConstraints constraints) {
-                      _isCollapsed =
-                          constraints.biggest.height <= kToolbarHeight;
+                      // _isCollapsed =
+                      //     constraints.biggest.height <= kToolbarHeight;
                       return GestureDetector(
                         onTap: () {
                           if (historyNovels.isNotEmpty && !_isCollapsed) {

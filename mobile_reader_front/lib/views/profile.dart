@@ -35,7 +35,7 @@ class ProfileState extends State<Profile> {
         builder: (context, userProvider, child) {
           return SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(8.0),
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [

@@ -47,7 +47,7 @@ class _ChapterTileState extends State<ChapterTile> {
   Future<void> _downloadChapterContent(
       BuildContext context, String chapterUrl, String chapterTitle) async {
     if (await _isChapterDownloaded(chapterTitle)) {
-      if (mounted) {
+      if (context.mounted) {
         showCustomSnackBar(
             context, 'Le chapitre à déjà été téléchargé', SnackBarType.info);
       }
@@ -56,14 +56,14 @@ class _ChapterTileState extends State<ChapterTile> {
     try {
       final content = await NovelService.fetchChapterContent(chapterUrl);
       await widget.prefs.setString(chapterTitle, content);
-      if (mounted) {
+      if (context.mounted) {
         showCustomSnackBar(
             context, "Le chapitre a été téléchargé", SnackBarType.success);
       }
       _updateDownloadStatus();
     } catch (e) {
       Log.logger.e("Error downloading chapter: $e");
-      if (mounted) {
+      if (context.mounted) {
         showCustomSnackBar(context, "Impossible de télécharger le chapitre",
             SnackBarType.error);
       }
@@ -115,7 +115,7 @@ class _ChapterTileState extends State<ChapterTile> {
         if (isDownloaded) {
           final content = widget.prefs.getString(widget.chapterDetail.title);
 
-          if (mounted) {
+          if (context.mounted) {
             Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => ChapterView(
                 novelTitle: widget.novelTitle,
@@ -130,41 +130,39 @@ class _ChapterTileState extends State<ChapterTile> {
             ));
           }
         } else {
-          if (mounted) {
-            if (mounted) {
-              showCustomSnackBar(
-                  context, 'Chapter not downloaded', SnackBarType.error);
-              showModalBottomSheet(
-                context: context,
-                builder: (BuildContext context) {
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.2,
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Text(widget.chapterDetail.title,
-                              style: Theme.of(context).textTheme.headlineSmall),
-                          Text("Vous n'avez pas téléchargé ce chapitre",
-                              style: Theme.of(context).textTheme.labelLarge),
-                          ElevatedButton.icon(
-                            icon: const Icon(Icons.download_outlined),
-                            label: const Text('Télécharger le chapitre'),
-                            onPressed: () {
-                              Navigator.pop(context);
-                              _downloadChapterContent(
-                                  context,
-                                  widget.chapterDetail.link,
-                                  widget.chapterDetail.title);
-                            },
-                          ),
-                        ],
-                      ),
+          if (context.mounted) {
+            showCustomSnackBar(
+                context, 'Chapter not downloaded', SnackBarType.error);
+            showModalBottomSheet(
+              context: context,
+              builder: (BuildContext context) {
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: <Widget>[
+                        Text(widget.chapterDetail.title,
+                            style: Theme.of(context).textTheme.headlineSmall),
+                        Text("Vous n'avez pas téléchargé ce chapitre",
+                            style: Theme.of(context).textTheme.labelLarge),
+                        ElevatedButton.icon(
+                          icon: const Icon(Icons.download_outlined),
+                          label: const Text('Télécharger le chapitre'),
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _downloadChapterContent(
+                                context,
+                                widget.chapterDetail.link,
+                                widget.chapterDetail.title);
+                          },
+                        ),
+                      ],
                     ),
-                  );
-                },
-              );
-            }
+                  ),
+                );
+              },
+            );
           }
         }
       },

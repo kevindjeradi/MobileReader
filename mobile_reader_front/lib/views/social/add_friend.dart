@@ -56,7 +56,7 @@ class _AddFriendState extends State<AddFriend> {
               bool isFriendAdded =
                   await userService.addFriend(widget.scannedUserId);
               if (isFriendAdded) {
-                if (mounted) {
+                if (context.mounted) {
                   showCustomSnackBar(
                       context,
                       "${widget.username} a bien été ajoutée à votre liste d'ami !",
@@ -64,7 +64,7 @@ class _AddFriendState extends State<AddFriend> {
                   Navigator.of(context).pop();
                 }
               } else {
-                if (mounted) {
+                if (context.mounted) {
                   showCustomSnackBar(
                       context,
                       "${widget.username} n'a pas pu être ajouté à votre liste d'ami. Réessayez plus tard.",
