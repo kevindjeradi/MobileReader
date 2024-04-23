@@ -171,11 +171,13 @@ class _HomeState extends State<Home> {
                                 ])
                               : null,
                           title: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            padding: _isCollapsed
+                                ? const EdgeInsets.symmetric(
+                                    horizontal: 16.0, vertical: 20)
+                                : const EdgeInsets.symmetric(horizontal: 16.0),
                             child: Align(
                               alignment: _isCollapsed
-                                  ? Alignment.centerLeft
+                                  ? Alignment.bottomLeft
                                   : Alignment.bottomCenter,
                               child: Text(
                                 _isCollapsed
