@@ -4,7 +4,7 @@
   "type": "module",
   "main": "server.ts",
   "scripts": {
-    "start": "nodemon --exec 'ts-node --loader ts-node/esm --max-old-space-size=4096' server.ts"
+    "start": "NODE_OPTIONS='--max-old-space-size=4096' nodemon --exec 'ts-node server.ts'"
   },
   "author": "",
   "license": "ISC",
