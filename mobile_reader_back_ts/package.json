@@ -4,8 +4,8 @@
   "type": "module",
   "main": "server.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+    "start": "nodemon --exec ts-node server.ts --loader ts-node/esm --max-old-space-size=4096"
+  },  
   "author": "",
   "license": "ISC",
   "dependencies": {
