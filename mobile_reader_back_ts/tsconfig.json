@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2016",
-    "module": "esnext",
+    "module": "commonjs",
     "rootDir": "./",
     "typeRoots": [
       "./node_modules/@types",
@@ -14,7 +14,7 @@
   },
   "include": [
     "./types/express.d.ts",
-    "./**/*.ts"
+    "./**/*.ts",
   ],
   "exclude": [
     "node_modules"
