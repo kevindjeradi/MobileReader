@@ -4,8 +4,8 @@
   "type": "module",
   "main": "server.ts",
   "scripts": {
-    "start": "nodemon --exec ts-node server.ts --loader ts-node/esm --max-old-space-size=4096"
-  },  
+    "start": "nodemon --exec 'ts-node --loader ts-node/esm --max-old-space-size=4096' server.ts"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
