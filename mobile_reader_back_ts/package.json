@@ -1,6 +1,7 @@
 {
   "name": "mobile_reader_back",
   "version": "1.0.0",
+  "type": "module",
   "main": "server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
