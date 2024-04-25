@@ -29,33 +29,17 @@ mongoose.connect(dbURI)
     .catch(err => console.error('Could not connect to MongoDB', err));
 
 app.use(cors());
-console.log('cors initialized');
-
 app.use(express.json({ limit: '50mb' }));
-console.log('express json size limit initialized');
-
 app.use('/images', express.static(path.join(__dirname, 'images')));
-console.log('image folder initialized');
 
 app.use('/', authRoutes);
-console.log('Auth routes initialized');
-
 app.use('/', userRoutes);
-console.log('User routes initialized');
-
 app.use('/', novelRoutes);
-console.log('Novel routes initialized');
-
 app.use('/', chapterRoutes);
-console.log('Chapter routes initialized');
-
 app.use('/api', scraperRoutes);
-console.log('Scraper routes initialized');
 
 setupDailyTasks();
-console.log('Daily tasks set up');
 
 app.listen(PORT, '0.0.0.0', function () {
     console.log(`Server is running on ${APP_URL}${PORT}`);
 });
-console.log('Server started');
