@@ -41,5 +41,12 @@ app.use('/api', scraperRoutes);
 setupDailyTasks();
 
 app.listen(PORT, '0.0.0.0', function () {
-    console.log(`Server is running on ${APP_URL}${PORT}`);
+    console.log(`Server is running on ${APP_URL}:${PORT}`);
+}).on('error', (err: NodeJS.ErrnoException) => {
+    if (err.code === 'EADDRINUSE') {
+        console.log(`!!! Error : Port ${PORT} is already in use.`);
+    } else {
+        console.log(err.message);
+    }
 });
+
