@@ -235,50 +235,54 @@ class ChapterViewState extends State<ChapterView> {
     return Scaffold(
       backgroundColor: theme.colorScheme.background,
       body: Stack(children: [
-        CustomScrollView(
+        Scrollbar(
+          radius: const Radius.circular(10.0),
           controller: _scrollController,
-          slivers: <Widget>[
-            SliverAppBar(
-              backgroundColor: theme.colorScheme.background,
-              foregroundColor: theme.colorScheme.onBackground,
-              pinned: _isAppBarVisible,
-              floating: true,
-              leading: IconButton(
-                splashColor: Colors.transparent,
-                highlightColor: Colors.transparent,
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(
-                  Icons.arrow_back_ios,
-                  color: theme.colorScheme.onBackground,
-                ),
-              ),
-              title: Text(widget.chapterTitle),
-              centerTitle: true,
-              elevation: 0,
-            ),
-            SliverToBoxAdapter(
-              child: GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: () {
-                  setState(() {
-                    _isAppBarVisible = !_isAppBarVisible;
-                  });
-                },
-                onDoubleTap: () => _showSettingsDialog(context),
-                child: Html(
-                  data: preprocessChapterContent(widget.chapterContent),
-                  style: {
-                    "p": Style(
-                      fontSize: FontSize(_fontSize),
-                      color: theme.colorScheme.onBackground,
-                    ),
+          child: CustomScrollView(
+            controller: _scrollController,
+            slivers: <Widget>[
+              SliverAppBar(
+                backgroundColor: theme.colorScheme.background,
+                foregroundColor: theme.colorScheme.onBackground,
+                pinned: _isAppBarVisible,
+                floating: true,
+                leading: IconButton(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  onPressed: () {
+                    Navigator.pop(context);
                   },
+                  icon: Icon(
+                    Icons.arrow_back_ios,
+                    color: theme.colorScheme.onBackground,
+                  ),
+                ),
+                title: Text(widget.chapterTitle),
+                centerTitle: true,
+                elevation: 0,
+              ),
+              SliverToBoxAdapter(
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () {
+                    setState(() {
+                      _isAppBarVisible = !_isAppBarVisible;
+                    });
+                  },
+                  onDoubleTap: () => _showSettingsDialog(context),
+                  child: Html(
+                    data: preprocessChapterContent(widget.chapterContent),
+                    style: {
+                      "p": Style(
+                        fontSize: FontSize(_fontSize),
+                        color: theme.colorScheme.onBackground,
+                      ),
+                    },
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         Positioned(
             left: 0,
