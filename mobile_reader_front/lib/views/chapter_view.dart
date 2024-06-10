@@ -289,7 +289,7 @@ class ChapterViewState extends State<ChapterView> {
             right: 0,
             bottom: 28,
             child: AnimatedSlide(
-              duration: const Duration(milliseconds: 500),
+              duration: const Duration(milliseconds: 300),
               offset: _isAppBarVisible ? Offset.zero : const Offset(0, 3),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -304,7 +304,7 @@ class ChapterViewState extends State<ChapterView> {
                         onPressed: widget.onPreviousChapter,
                         icon: const Icon(
                           Icons.navigate_before,
-                          size: 32,
+                          size: 35,
                         )),
                   ),
                   const SizedBox(width: 32),
@@ -331,7 +331,7 @@ class ChapterViewState extends State<ChapterView> {
                         onPressed: widget.onNextChapter,
                         icon: const Icon(
                           Icons.navigate_next,
-                          size: 32,
+                          size: 35,
                         )),
                   ),
                 ],
